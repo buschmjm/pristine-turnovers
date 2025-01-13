@@ -1,0 +1,67 @@
+components:
+- components:
+  - components:
+    - layout_properties: {grid_position: 'ZLJFLY,FOXQET'}
+      name: label_2
+      properties: {align: left, text: Select a customer}
+      type: Label
+    - layout_properties: {grid_position: 'YLJONE,VQTBOB'}
+      name: customer_selector
+      properties: {}
+      type: DropDown
+    - layout_properties: {grid_position: 'RMQVEC,LJFOHR'}
+      name: spacer_1
+      properties: {height: 32}
+      type: Spacer
+    - layout_properties: {grid_position: 'VMITVQ,XCOWXF'}
+      name: label_3
+      properties: {align: center, text: Create New Customer}
+      type: Label
+    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ FXQYGW,RSOHBG'}
+      name: label_4
+      properties: {text: First Name}
+      type: Label
+    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ FLXWES,ZOBDYI'}
+      name: label_5
+      properties: {text: Last Name}
+      type: Label
+    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ SXWPOV,EOGCKL'}
+      name: label_6
+      properties: {text: Email}
+      type: Label
+    - layout_properties: {grid_position: 'GAYYZW,VSOURG RMTMFC,PWMWUH'}
+      name: first_name_input
+      properties: {}
+      type: TextBox
+    - layout_properties: {grid_position: 'GAYYZW,VSOURG ECBWNM,UGJNGB'}
+      name: last_name_input
+      properties: {}
+      type: TextBox
+    - layout_properties: {grid_position: 'GAYYZW,VSOURG FQZAKN,MEMSNT'}
+      name: email_input
+      properties: {}
+      type: TextBox
+    layout_properties: {grid_position: 'NFUGQK,LJPWTT'}
+    name: customer_card
+    properties: {col_widths: '{"IQVOOZ":15,"VSOURG":45,"YOLTDT":20}', role: outlined-card}
+    type: ColumnPanel
+  - layout_properties: {grid_position: 'TUFSRQ,VFYKDH'}
+    name: outlined_card_2
+    properties: {role: outlined-card}
+    type: ColumnPanel
+  layout_properties: {slot: default}
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+- layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+- layout_properties: {slot: title}
+  name: label_1
+  properties: {text: Payment Collection Form}
+  type: Label
+container:
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true
