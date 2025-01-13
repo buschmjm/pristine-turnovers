@@ -8,4 +8,5 @@ unique_ids:
     sendInvoice: '1736795467958879845247810.6202'
   modules: {}
   scripts: {}
-  server_modules: {}
+  server_modules:
+    StripeCustomers: '1736801942112426638128308.4124'

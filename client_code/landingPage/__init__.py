@@ -1,6 +1,11 @@
 from ._anvil_designer import landingPageTemplate
 from anvil import *
-
+import anvil.server
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
+import anvil.users
+import anvil
 
 class landingPage(landingPageTemplate):
   def __init__(self, **properties):
@@ -14,5 +19,4 @@ class landingPage(landingPageTemplate):
     pass
 
   def collect_payment_button_click(self, **event_args):
-    """This met\hod is called when the button is clicked"""
-    pass
+    anvil.open_form('collectPayment')

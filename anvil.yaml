@@ -1,4 +1,28 @@
 allow_embedding: false
+db_schema:
+  users:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: email
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: enabled
+      type: bool
+    - admin_ui: {order: 2, width: 200}
+      name: last_login
+      type: datetime
+    - admin_ui: {order: 3, width: 200}
+      name: password_hash
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      name: n_password_failures
+      type: number
+    - admin_ui: {order: 5, width: 200}
+      name: confirmed_email
+      type: bool
+    server: full
+    title: Users
 dependencies: []
 metadata: {title: Matts Holdings Payments}
 name: Matts Holdings Payments
@@ -9,9 +33,19 @@ runtime_options:
   server_spec: {base: python310-minimal}
   server_version: python3-sandbox
   version: 2
+secrets:
+  pristine_stripe_test_secret:
+    type: secret
+    value: {4LX7L3LPHH3ODGI3: NMVqOLfbigmd1Yfjzu2uUQJmj+ZYU4eLxvslHLcngucvipPs3+bEAncw0rhPFiZJWXrTAYU5Qpti6RSQaq+hQB8ISL0uFWI2ybztfRVsKkA+y3dd6IBPivycZi9E0xO29FgYFeHrucps/P9nLPHEoGRZ1b4Y4HZ+nPjmMlCD58VjOtkl+dcy9PZ38ej/U88Fe6eF2WdI1j+VfukWwtITbP2hcXGquMBA+tFiVzxm7I7t1e043XnHs+aHKOrqnKBzZnsvCB8ySCzjcA==}
 services:
 - client_config: {}
   server_config: {}
   source: /runtime/services/tables.yml
+- client_config: {allow_signup: false, confirm_email: true, enable_automatically: true, use_email: true}
+  server_config: {user_table: users}
+  source: /runtime/services/anvil/users.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/anvil/secrets.yml
 startup: {module: landingPage, type: form}
 startup_form: null

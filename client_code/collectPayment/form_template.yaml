@@ -13,37 +13,50 @@ components:
       name: spacer_1
       properties: {height: 32}
       type: Spacer
-    - layout_properties: {grid_position: 'VMITVQ,XCOWXF'}
-      name: label_3
-      properties: {align: center, text: Create New Customer}
-      type: Label
-    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ FXQYGW,RSOHBG'}
-      name: label_4
-      properties: {text: First Name}
-      type: Label
-    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ FLXWES,ZOBDYI'}
-      name: label_5
-      properties: {text: Last Name}
-      type: Label
-    - layout_properties: {grid_position: 'GAYYZW,IQVOOZ SXWPOV,EOGCKL'}
-      name: label_6
-      properties: {text: Email}
-      type: Label
-    - layout_properties: {grid_position: 'GAYYZW,VSOURG RMTMFC,PWMWUH'}
-      name: first_name_input
-      properties: {}
-      type: TextBox
-    - layout_properties: {grid_position: 'GAYYZW,VSOURG ECBWNM,UGJNGB'}
-      name: last_name_input
-      properties: {}
-      type: TextBox
-    - layout_properties: {grid_position: 'GAYYZW,VSOURG FQZAKN,MEMSNT'}
-      name: email_input
-      properties: {}
-      type: TextBox
+    - components:
+      - layout_properties: {grid_position: 'RATFCW,THXWWD'}
+        name: spacer_2_copy
+        properties: {height: 196.60992431640625}
+        type: Spacer
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV XZATKR,OIMVKR'}
+        name: label_3
+        properties: {align: center, text: Create New Customer, visible: true}
+        type: Label
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV STEYFX,SEUDFB'}
+        name: label_4
+        properties: {align: left, text: First Name}
+        type: Label
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV STEYFX,JWBZYU'}
+        name: first_name_input
+        properties: {}
+        type: TextBox
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV GVMCRV,VSIXEV'}
+        name: label_5
+        properties: {align: left, text: Last Name}
+        type: Label
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV GVMCRV,GEAHYI'}
+        name: last_name_input
+        properties: {}
+        type: TextBox
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV MQLERL,JHMBLU'}
+        name: label_6
+        properties: {align: left, text: Email}
+        type: Label
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV MQLERL,KAMFGN'}
+        name: email_input
+        properties: {}
+        type: TextBox
+      - layout_properties: {grid_position: 'RATFCW,UNZDJH'}
+        name: spacer_2
+        properties: {height: 196.60992431640625}
+        type: Spacer
+      layout_properties: {grid_position: 'ACRQID,KXDPPQ'}
+      name: outlined_card_1
+      properties: {col_widths: '{"SEUDFB":15,"JWBZYU":45,"VSIXEV":15,"GEAHYI":45,"JHMBLU":15,"KAMFGN":45,"IXLRTV":60,"UNZDJH":10,"THXWWD":10}', role: outlined-card}
+      type: ColumnPanel
     layout_properties: {grid_position: 'NFUGQK,LJPWTT'}
     name: customer_card
-    properties: {col_widths: '{"IQVOOZ":15,"VSOURG":45,"YOLTDT":20}', role: outlined-card}
+    properties: {col_widths: '{}', role: outlined-card}
     type: ColumnPanel
   - layout_properties: {grid_position: 'TUFSRQ,VFYKDH'}
     name: outlined_card_2
