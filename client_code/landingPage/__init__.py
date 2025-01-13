@@ -14,5 +14,5 @@ class landingPage(landingPageTemplate):
     pass
 
   def collect_payment_button_click(self, **event_args):
-    """This method is called when the button is clicked"""
+    """This met\hod is called when the button is clicked"""
     pass
