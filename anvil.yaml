@@ -4,16 +4,16 @@ db_schema:
     client: none
     columns:
     - admin_ui: {order: 0, width: 200}
-      name: StripeID
+      name: stripeId
       type: string
     - admin_ui: {order: 1, width: 200}
-      name: Name
+      name: name
       type: string
     - admin_ui: {order: 2, width: 200}
-      name: Email
+      name: email
       type: string
     - admin_ui: {order: 3, width: 200}
-      name: Company
+      name: company
       type: string
     server: full
     title: Customers
@@ -39,7 +39,10 @@ db_schema:
       name: confirmed_email
       type: bool
     - admin_ui: {order: 6, width: 200}
-      name: role
+      name: admin
+      type: bool
+    - admin_ui: {order: 7, width: 200}
+      name: company
       type: string
     server: full
     title: Users
