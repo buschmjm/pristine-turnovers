@@ -56,7 +56,13 @@ runtime_options:
   server_spec: {base: python310-minimal}
   server_version: python3-sandbox
   version: 2
-scheduled_tasks: []
+scheduled_tasks:
+- job_id: ITEVJGRB
+  task_name: get_recent_customers
+  time_spec:
+    at: {hour: 3, minute: 0}
+    every: day
+    n: 1
 secrets:
   pristine_stripe_test_secret:
     type: secret

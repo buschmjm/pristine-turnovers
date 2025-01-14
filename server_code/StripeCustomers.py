@@ -9,7 +9,7 @@ import datetime
 import time
 import StripeCustomers
 
-@anvil.server.callable
+@anvil.server.background_task
 def get_recent_customers():
     # Retrieve the Stripe secret key from Anvil's secrets
     stripe_secret_key = anvil.secrets.get_secret("pristine_stripe_test_secret")
