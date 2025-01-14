@@ -1,5 +1,22 @@
 allow_embedding: false
 db_schema:
+  customers:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: StripeID
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: Name
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: Email
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      name: Company
+      type: string
+    server: full
+    title: Customers
   users:
     client: none
     columns:
@@ -21,6 +38,9 @@ db_schema:
     - admin_ui: {order: 5, width: 200}
       name: confirmed_email
       type: bool
+    - admin_ui: {order: 6, width: 200}
+      name: role
+      type: string
     server: full
     title: Users
 dependencies: []
