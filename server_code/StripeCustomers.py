@@ -7,6 +7,7 @@ import anvil.server
 import requests
 import datetime
 import time
+import StripeCustomers
 
 @anvil.server.callable
 def get_recent_customers():
