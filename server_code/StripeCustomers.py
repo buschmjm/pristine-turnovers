@@ -3,7 +3,26 @@ import requests
 import json
 from anvil.tables import app_tables
 from . import qboUtils
-from . import accessRenewal  # Add this import
+from . import accessRenewal
+
+@anvil.server.callable
+def create_and_store_customer(first_name, last_name, email):
+    """Create customer in QBO and store in local table."""
+    # First create the customer in QBO
+    qbo_customer = create_qbo_customer(first_name, last_name, email)
+    
+    # Then store in local table
+    try:
+        app_tables.customers.add_row(
+            stripeId=qbo_customer["Id"],
+            firstName=first_name,
+            lastName=first_name,
+            email=email
+        )
+        return qbo_customer
+    except Exception as e:
+        print(f"Error storing customer in local table: {e}")
+        raise Exception("Customer created in QBO but failed to store locally")
 
 @anvil.server.callable
 def create_qbo_customer(first_name, last_name, email):
@@ -37,7 +56,7 @@ def create_qbo_customer(first_name, last_name, email):
         else:
             # Handle token expiration and retry
             print("Initial request failed, refreshing token and retrying...")
-            new_token = accessRenewal.refresh_qbo_access_token()  # Update this line
+            new_token = accessRenewal.refresh_qbo_access_token()
             headers["Authorization"] = f"Bearer {new_token}"
             response = requests.post(url, headers=headers, data=json.dumps(customer_payload))
             response_data = response.json()

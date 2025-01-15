@@ -2,11 +2,6 @@ from ._anvil_designer import collectPaymentTemplate
 from anvil import *
 import stripe.checkout
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-import anvil.users
-
 
 class collectPayment(collectPaymentTemplate):
   def create_invoice_button_click(self, **event_args):
@@ -32,24 +27,13 @@ class collectPayment(collectPaymentTemplate):
     last_name = self.last_name_input.text
     email = self.email_input.text
 
-    # Validate inputs
     if not first_name or not last_name or not email:
         alert("Please fill in all fields: First Name, Last Name, and Email.")
         return
 
     try:
-        # Call the server function to create a customer
-        customer_data = anvil.server.call('create_qbo_customer', first_name, last_name, email)
-
-        # Add the customer to the Anvil Data Table
-        app_tables.customers.add_row(
-            stripeId=customer_data["Id"],  # The QBO Customer ID
-            firstName=first_name,
-            lastName=last_name,
-            email=email
-        )
-
+        # Single server call to handle both QBO and local customer creation
+        customer_data = anvil.server.call('create_and_store_customer', first_name, last_name, email)
         alert(f"Customer created successfully! Customer ID: {customer_data['Id']}")
-
     except Exception as e:
         alert(f"Failed to create customer: {e}")
