@@ -4,6 +4,8 @@ import json
 from anvil.tables import app_tables
 from . import qboUtils
 from . import accessRenewal
+from datetime import datetime
+import pytz
 
 @anvil.server.callable
 def check_existing_customer(email):
@@ -35,21 +37,37 @@ def create_and_store_customer(first_name, last_name, email):
     """Create customer in QBO and store in local table."""
     # First check if customer exists
     existing_customer = check_existing_customer(email)
-    if (existing_customer):
+    if existing_customer:
         raise Exception("Customer with this email already exists in QuickBooks Online")
         
-    # If no existing customer, proceed with creation
+    # Create customer in QBO
     qbo_customer = create_qbo_customer(first_name, last_name, email)
     
-    # Then store in local table
+    # Get current timestamp in US Central time
+    cst = pytz.timezone('US/Central')
+    current_time = datetime.now(cst)
+    
+    # Store in local table with timestamp
     try:
-        app_tables.customers.add_row(
+        customer_row = app_tables.customers.add_row(
             stripeId=qbo_customer["Id"],
             firstName=first_name,
-            lastName=first_name,
-            email=email
+            lastName=last_name,  # Fixed: was storing firstName twice
+            email=email,
+            lastAccessed=current_time
         )
-        return qbo_customer
+        
+        # Return successful creation response with customer ID
+        return {
+            "success": True,
+            "customerId": qbo_customer["Id"],
+            "customerData": {
+                "firstName": first_name,
+                "lastName": last_name,
+                "email": email,
+                "created": current_time
+            }
+        }
     except Exception as e:
         print(f"Error storing customer in local table: {e}")
         raise Exception("Customer created in QBO but failed to store locally")

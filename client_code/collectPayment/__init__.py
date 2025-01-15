@@ -32,9 +32,13 @@ class collectPayment(collectPaymentTemplate):
         return
 
     try:
-        # Single server call to handle both QBO and local customer creation
-        customer_data = anvil.server.call('create_and_store_customer', first_name, last_name, email)
-        alert(f"Customer created successfully! Customer ID: {customer_data['Id']}")
+        result = anvil.server.call('create_and_store_customer', first_name, last_name, email)
+        if result["success"]:
+            alert(f"Customer created successfully!\nCustomer ID: {result['customerId']}")
+            # Optional: Clear the form after successful creation
+            self.first_name_input.text = ""
+            self.last_name_input.text = ""
+            self.email_input.text = ""
     except Exception as e:
         if "already exists" in str(e):
             alert("This email address is already associated with a customer in QuickBooks Online. Please use a different email or contact support if you believe this is an error.")
