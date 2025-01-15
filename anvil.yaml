@@ -58,9 +58,9 @@ db_schema:
     server: full
     title: Users
 dependencies: []
-metadata: {title: Matts Holdings Payments}
-name: Matts Holdings Payments
-package_name: Matts_Holdings_Payments
+metadata: {title: Pristine Cleaners}
+name: Pristine Cleaners
+package_name: Pristine_Cleaners
 renamed: true
 runtime_options:
   client_version: '3'
