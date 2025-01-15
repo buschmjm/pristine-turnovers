@@ -6,7 +6,7 @@ components:
       properties: {align: left, text: Search existing customers}
       type: Label
     - data_bindings: []
-      event_bindings: {}
+      event_bindings: {change: customer_selector_change}
       layout_properties: {grid_position: 'YLJONE,VQTBOB'}
       name: customer_selector
       properties: {include_placeholder: true, placeholder: Scroll or type to locate customers..}
