@@ -4,7 +4,7 @@ db_schema:
     client: none
     columns:
     - admin_ui: {order: 0, width: 200}
-      name: stripeId
+      name: qbId
       type: string
     - admin_ui: {order: 1, width: 200}
       name: firstName
