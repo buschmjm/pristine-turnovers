@@ -68,15 +68,12 @@ def create_and_store_customer(first_name, last_name, email):
 
 @anvil.server.callable
 def create_qbo_customer(first_name, last_name, email):
-    """Create a customer in QuickBooks Online with date prefix to handle duplicate names."""
+    """Create a customer in QuickBooks Online."""
     if not all([first_name, last_name, email]):
         raise ValueError("First name, last name, and email are required.")
 
-    # Add date prefix in mm/dd/yy format
-    date_prefix = datetime.now().strftime("%m/%d/%y")
-    
+    # First attempt without date prefix
     customer_payload = {
-        "Title": date_prefix,  # Add date as prefix/title
         "GivenName": first_name,
         "FamilyName": last_name,
         "PrimaryEmailAddr": {"Address": email}
@@ -100,8 +97,28 @@ def create_qbo_customer(first_name, last_name, email):
             print(f"Customer created successfully. ID: {customer_id}")
             return response_data["Customer"]
         else:
-            # Handle token expiration and retry
-            print("Initial request failed, refreshing token and retrying...")
+            # Check if it's a duplicate name error
+            if ("Fault" in response_data and 
+                response_data["Fault"]["Error"][0].get("code") == "6240" and 
+                "Duplicate Name Exists Error" in response_data["Fault"]["Error"][0].get("Message", "")):
+                
+                print("Duplicate name detected, retrying with creation date as title...")
+                # Add date prefix and retry
+                date_prefix = datetime.now().strftime("%m/%d/%y")
+                customer_payload["Title"] = date_prefix
+
+                # Try again with date prefix
+                response = requests.post(url, headers=headers, data=json.dumps(customer_payload))
+                response_data = response.json()
+
+                if response.status_code == 200 and "Customer" in response_data:
+                    customer_id = response_data["Customer"]["Id"]
+                    print(f"Customer created successfully with date prefix. ID: {customer_id}")
+                    return response_data["Customer"]
+            
+            # If we get here, either it wasn't a duplicate name error or the retry failed
+            # Handle token expiration and retry one last time
+            print("Request failed, refreshing token and retrying...")
             new_token = accessRenewal.refresh_qbo_access_token()
             headers["Authorization"] = f"Bearer {new_token}"
             response = requests.post(url, headers=headers, data=json.dumps(customer_payload))
@@ -112,7 +129,20 @@ def create_qbo_customer(first_name, last_name, email):
                 print(f"Customer created successfully after token refresh. ID: {customer_id}")
                 return response_data["Customer"]
             else:
-                raise Exception(f"Failed to create customer after token refresh: {response_data}")
+                # Final error handling
+                if "Fault" in response_data:
+                    error_code = response_data["Fault"]["Error"][0].get("code", "")
+                    error_message = response_data["Fault"]["Error"][0].get("Message", "")
+                    error_detail = response_data["Fault"]["Error"][0].get("Detail", "")
+                    
+                    if error_code == "6240" and "Duplicate Name Exists Error" in error_message:
+                        raise Exception("A customer with this name already exists in QuickBooks Online. "
+                                     "This can happen if another customer was created on the same date. "
+                                     "Please try again tomorrow or contact support if this is urgent.")
+                    else:
+                        raise Exception(f"QuickBooks Error: {error_message} - {error_detail}")
+                else:
+                    raise Exception(f"Failed to create customer: {response_data}")
     except Exception as e:
         print(f"Error creating customer: {e}")
         raise

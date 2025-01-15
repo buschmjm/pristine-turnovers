@@ -39,7 +39,11 @@ class collectPayment(collectPaymentTemplate):
             self.last_name_input.text = ""
             self.email_input.text = ""
     except Exception as e:
-        if "already exists" in str(e):
-            alert("This email address is already associated with a customer in QuickBooks Online. Please use a different email or contact support if you believe this is an error.")
+        error_message = str(e)
+        if "already exists in QuickBooks Online" in error_message:
+            alert(error_message)
+        elif "email already exists" in error_message.lower():
+            alert("This email address is already associated with a customer in QuickBooks Online. "
+                 "Please use a different email or contact support if you believe this is an error.")
         else:
-            alert(f"Failed to create customer: {e}")
+            alert(f"Failed to create customer: {error_message}")
