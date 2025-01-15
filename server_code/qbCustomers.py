@@ -168,3 +168,30 @@ def get_recent_customers(months_active=3):
     except Exception as e:
         print(f"Error fetching recent customers: {e}")
         raise
+
+@anvil.server.callable
+def search_customers(search_text):
+    """Search for customers by name or email"""
+    try:
+        # Convert search text to lowercase for case-insensitive search
+        search_text = search_text.lower()
+        
+        # Search in local database
+        matches = app_tables.customers.search(
+            tables.order_by("lastName", ascending=True),
+            q.any_of(
+                q.ilike("firstName", f"%{search_text}%"),
+                q.ilike("lastName", f"%{search_text}%"),
+                q.ilike("email", f"%{search_text}%")
+            )
+        )
+        
+        return [{
+            'firstName': c['firstName'],
+            'lastName': c['lastName'],
+            'email': c['email'],
+            'qbId': str(c['qbId'])
+        } for c in matches]
+    except Exception as e:
+        print(f"Error searching customers: {e}")
+        raise

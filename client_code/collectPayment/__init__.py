@@ -7,22 +7,36 @@ class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
         self.ACTIVE_CUSTOMER_MONTHS = 3
+        self.SEARCH_MIN_CHARS = 3  # Minimum characters before searching
         
-        # Initialize dropdown with just the placeholder
-        self.customer_selector.items = ['-- Select to Load Customers --']
+    def customer_selector_change(self, **event_args):
+        """This method is called when the text in customer_selector changes"""
+        search_text = self.customer_selector.text
         
-    def customer_selector1_change(self, **event_args):
-        """This method is called when an item is selected"""
-        if self.customer_selector.selected_value == '-- Select to Load Customers --':
+        # Only search if we have enough characters
+        if len(search_text) >= self.SEARCH_MIN_CHARS:
             try:
-                recent_customers = anvil.server.call('get_recent_customers', self.ACTIVE_CUSTOMER_MONTHS)
-                # Convert the dictionary format to tuple format for dropdown
-                formatted_customers = [('-- Select Customer --', '')] + [
-                    (f"{c['text']}", c['value']) for c in recent_customers
-                ]
-                self.customer_selector.items = formatted_customers
+                matches = anvil.server.call('search_customers', search_text)
+                if matches:
+                    # Create dropdown panel with matches
+                    dropdown_items = []
+                    for match in matches:
+                        dropdown_items.append({
+                            'name': f"{match['firstName']} {match['lastName']}",
+                            'email': match['email'],
+                            'id': match['qbId']
+                        })
+                    # You'll need to implement the UI for showing these matches
+                    # This could be a dropdown panel below the textbox
+                    self.show_customer_matches(dropdown_items)
             except Exception as e:
-                alert(f"Failed to load customer list: {str(e)}")
+                print(f"Error searching customers: {str(e)}")
+
+    def show_customer_matches(self, matches):
+        """Show matching customers in a dropdown panel"""
+        # Implementation depends on your UI components
+        # You might want to show/hide a repeating panel or dropdown below the textbox
+        pass
 
     def create_invoice_button_click(self, **event_args):
         """
