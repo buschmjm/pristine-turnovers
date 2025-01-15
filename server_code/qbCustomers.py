@@ -4,7 +4,7 @@ import json
 from anvil.tables import app_tables
 from . import qboUtils
 from . import accessRenewal
-from datetime import datetime  # This is all we need
+from datetime import datetime, timedelta  # This is all we need
 
 @anvil.server.callable
 def check_existing_customer(email):
@@ -145,4 +145,25 @@ def create_qbo_customer(first_name, last_name, email):
                     raise Exception(f"Failed to create customer: {response_data}")
     except Exception as e:
         print(f"Error creating customer: {e}")
+        raise
+
+@anvil.server.callable
+def get_recent_customers(months_active=3):
+    """Get customers who were active within the specified number of months."""
+    cutoff_date = datetime.now() - timedelta(days=months_active * 30)
+    
+    try:
+        # Query customers table for recent activity
+        recent_customers = app_tables.customers.search(
+            tables.order_by("lastName", ascending=True),
+            lastAccessed=q.greater_than(cutoff_date)
+        )
+        
+        # Format customers for dropdown
+        return [{
+            'value': customer['qbId'],  # Value stored in dropdown
+            'text': f"{customer['firstName']} {customer['lastName']} ({customer['email']})"  # Text shown in dropdown
+        } for customer in recent_customers]
+    except Exception as e:
+        print(f"Error fetching recent customers: {e}")
         raise
