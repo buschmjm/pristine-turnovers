@@ -36,4 +36,7 @@ class collectPayment(collectPaymentTemplate):
         customer_data = anvil.server.call('create_and_store_customer', first_name, last_name, email)
         alert(f"Customer created successfully! Customer ID: {customer_data['Id']}")
     except Exception as e:
-        alert(f"Failed to create customer: {e}")
+        if "already exists" in str(e):
+            alert("This email address is already associated with a customer in QuickBooks Online. Please use a different email or contact support if you believe this is an error.")
+        else:
+            alert(f"Failed to create customer: {e}")
