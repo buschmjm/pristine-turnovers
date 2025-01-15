@@ -3,6 +3,7 @@ import requests
 import json
 from anvil.tables import app_tables
 from . import qboUtils
+from . import accessRenewal  # Add this import
 
 @anvil.server.callable
 def create_qbo_customer(first_name, last_name, email):
@@ -36,7 +37,7 @@ def create_qbo_customer(first_name, last_name, email):
         else:
             # Handle token expiration and retry
             print("Initial request failed, refreshing token and retrying...")
-            new_token = refresh_qbo_access_token()
+            new_token = accessRenewal.refresh_qbo_access_token()  # Update this line
             headers["Authorization"] = f"Bearer {new_token}"
             response = requests.post(url, headers=headers, data=json.dumps(customer_payload))
             response_data = response.json()
