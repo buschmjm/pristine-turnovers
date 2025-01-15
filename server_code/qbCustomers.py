@@ -45,7 +45,7 @@ def create_and_store_customer(first_name, last_name, email):
     # Store in local table with current timestamp
     try:
         customer_row = app_tables.customers.add_row(
-            stripeId=qbo_customer["Id"],
+            qbId=qbo_customer["Id"],  # Changed from stripeId to qbId
             firstName=first_name,
             lastName=last_name,
             email=email,
