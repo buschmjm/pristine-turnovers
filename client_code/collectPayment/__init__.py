@@ -11,7 +11,7 @@ class collectPayment(collectPaymentTemplate):
         # Initialize dropdown with just the placeholder
         self.customer_selector.items = ['-- Select to Load Customers --']
         
-    def customer_selector_change(self, **event_args):
+    def customer_selector1_change(self, **event_args):
         """This method is called when an item is selected"""
         if self.customer_selector.selected_value == '-- Select to Load Customers --':
             try:
