@@ -153,7 +153,7 @@ def get_recent_customers(months_active=3):
     cutoff_date = datetime.now() - timedelta(days=months_active * 30)
     
     try:
-        # Query customers table for recent activity
+        # Query customers table for recent activity using proper table reference
         recent_customers = app_tables.customers.search(
             tables.order_by("lastName", ascending=True),
             lastAccessed=q.greater_than(cutoff_date)
@@ -161,9 +161,9 @@ def get_recent_customers(months_active=3):
         
         # Format customers for dropdown
         return [{
-            'value': customer['qbId'],  # Value stored in dropdown
-            'text': f"{customer['firstName']} {customer['lastName']} ({customer['email']})"  # Text shown in dropdown
-        } for customer in recent_customers]
+            'value': c['qbId'],
+            'text': f"{c['firstName']} {c['lastName']} ({c['email']})"
+        } for c in recent_customers]
     except Exception as e:
         print(f"Error fetching recent customers: {e}")
         raise

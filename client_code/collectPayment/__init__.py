@@ -7,23 +7,22 @@ class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        
-        # Configuration variable for active customer timeframe (in months)
         self.ACTIVE_CUSTOMER_MONTHS = 3
         
-        # Populate customer selector
-        self.populate_customer_selector()
-
-    def populate_customer_selector(self):
-        """Populate the customer dropdown with recent customers."""
-        try:
-            recent_customers = anvil.server.call('get_recent_customers', self.ACTIVE_CUSTOMER_MONTHS)
-            
-            # Add a blank option at the start
-            self.customer_selector.items = [{'value': '', 'text': '-- Select Customer --'}] + recent_customers
-            
-        except Exception as e:
-            alert(f"Failed to load customer list: {str(e)}")
+        # Initialize dropdown with just the placeholder
+        self.customer_selector.items = [{'value': '', 'text': '-- Select to Load Customers --'}]
+        
+    def customer_selector_click(self, **event_args):
+        """This method is called when the customer selector is clicked"""
+        # Only populate if not already populated
+        if len(self.customer_selector.items) <= 1:
+            try:
+                recent_customers = anvil.server.call('get_recent_customers', self.ACTIVE_CUSTOMER_MONTHS)
+                self.customer_selector.items = [
+                    {'value': '', 'text': '-- Select Customer --'}
+                ] + recent_customers
+            except Exception as e:
+                alert(f"Failed to load customer list: {str(e)}")
 
     def create_invoice_button_click(self, **event_args):
         """
