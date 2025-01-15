@@ -77,5 +77,9 @@ services:
 - client_config: {}
   server_config: {}
   source: /runtime/services/anvil/secrets.yml
+- client_config:
+    publishable_key: {test: sk_test_51OrkJnKasGaTQc2wZEGkq3eyAasogPxlSJBJkqtOWO4SX1tx3cd9irq5xuqnX2UC5XHuP0tORiqv8Q6jwZlVSdE700mRoc9kKz}
+  server_config: {refresh_token: rt_RakD8Htu5QQMH3Ibml9CRunWMB2Px111abZHC9RwpjGCTsBg, stripe_user_id: acct_1OrkJnKasGaTQc2w}
+  source: /runtime/services/stripe.yml
 startup: {module: landingPage, type: form}
 startup_form: null

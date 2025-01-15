@@ -1,3 +1,4 @@
+import anvil.stripe
 import anvil.secrets
 import anvil.users
 import anvil.tables as tables 
@@ -7,42 +8,26 @@ import anvil.server
 import requests
 import datetime
 import time
-import StripeCustomers
 
-@anvil.server.background_task
-def get_recent_customers():
-    # Retrieve the Stripe secret key from Anvil's secrets
-    stripe_secret_key = anvil.secrets.get_secret("pristine_stripe_test_secret")
 
-    # Calculate the Unix timestamp for six months ago
-    six_months_ago = datetime.datetime.now() - datetime.timedelta(days=182)
-    six_months_ago_timestamp = int(time.mktime(six_months_ago.timetuple()))
+# Initialize Stripe with your secret key
+anvil.stripe.api_key = anvil.secrets.get_secret('pristine_stripe_test_secret')
 
-    # Set up the request to Stripe's API
-    url = 'https://api.stripe.com/v1/customers'
-    headers = {
-        'Authorization': f'Bearer {stripe_secret_key}'
-    }
-    params = {
-        'created[gte]': six_months_ago_timestamp,
-        'limit': 100  # Adjust the limit as needed; max is 100
-    }
+@anvil.server.callable
+def get_billing_items():
+    try:
+        # Fetch billing items (e.g., products, prices, etc.)
+        prices = anvil.stripe.Price.list(limit=100)  # Adjust limit as needed
+        billing_items = [{'description': price['product'], 'amount': price['unit_amount']} for price in prices['data']]
+        return billing_items
+    except Exception as e:
+        raise anvil.server.AnvilWrappedError(f"Error retrieving billing items: {e}")
 
-    customers = []
-    has_more = True
-    starting_after = None
-
-    while has_more:
-        if starting_after:
-            params['starting_after'] = starting_after
-
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()  # Raise an error for bad responses
-
-        data = response.json()
-        customers.extend(data['data'])
-        has_more = data.get('has_more', False)
-        if has_more:
-            starting_after = data['data'][-1]['id']
-
-    return customers
+@anvil.server.callable
+def add_customer(id, name, email, company):
+  app_tables.articles.add_row(
+      stripeId=id,
+      name=name,
+      email=email,
+      company=company
+  )
