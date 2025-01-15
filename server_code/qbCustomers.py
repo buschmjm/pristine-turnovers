@@ -2,6 +2,8 @@ import anvil.server
 import requests
 import json
 from anvil.tables import app_tables
+import anvil.tables as tables
+import anvil.tables.query as q
 from . import qboUtils
 from . import accessRenewal
 from datetime import datetime, timedelta  # This is all we need
@@ -36,7 +38,7 @@ def create_and_store_customer(first_name, last_name, email):
     """Create customer in QBO and store in local table."""
     # First check if customer exists
     existing_customer = check_existing_customer(email)
-    if existing_customer:
+    if (existing_customer):
         raise Exception("Customer with this email already exists in QuickBooks Online")
         
     # Create customer in QBO
