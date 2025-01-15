@@ -4,8 +4,7 @@ import json
 from anvil.tables import app_tables
 from . import qboUtils
 from . import accessRenewal
-from datetime import datetime
-import pytz
+from datetime import datetime  # This is all we need
 
 @anvil.server.callable
 def check_existing_customer(email):
@@ -43,21 +42,16 @@ def create_and_store_customer(first_name, last_name, email):
     # Create customer in QBO
     qbo_customer = create_qbo_customer(first_name, last_name, email)
     
-    # Get current timestamp in US Central time
-    cst = pytz.timezone('US/Central')
-    current_time = datetime.now(cst)
-    
-    # Store in local table with timestamp
+    # Store in local table with current timestamp
     try:
         customer_row = app_tables.customers.add_row(
             stripeId=qbo_customer["Id"],
             firstName=first_name,
-            lastName=last_name,  # Fixed: was storing firstName twice
+            lastName=last_name,
             email=email,
-            lastAccessed=current_time
+            lastAccessed=datetime.now()  # Anvil will handle the timezone automatically
         )
         
-        # Return successful creation response with customer ID
         return {
             "success": True,
             "customerId": qbo_customer["Id"],
@@ -65,7 +59,7 @@ def create_and_store_customer(first_name, last_name, email):
                 "firstName": first_name,
                 "lastName": last_name,
                 "email": email,
-                "created": current_time
+                "created": datetime.now()
             }
         }
     except Exception as e:
