@@ -1,6 +1,5 @@
 from ._anvil_designer import sendInvoiceTemplate
 from anvil import *
-import stripe.checkout
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q

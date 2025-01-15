@@ -1,6 +1,5 @@
 from ._anvil_designer import collectPaymentTemplate
 from anvil import *
-import stripe.checkout
 import anvil.server
 
 class collectPayment(collectPaymentTemplate):
