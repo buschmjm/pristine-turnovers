@@ -68,11 +68,15 @@ def create_and_store_customer(first_name, last_name, email):
 
 @anvil.server.callable
 def create_qbo_customer(first_name, last_name, email):
-    """Create a customer in QuickBooks Online."""
+    """Create a customer in QuickBooks Online with date prefix to handle duplicate names."""
     if not all([first_name, last_name, email]):
         raise ValueError("First name, last name, and email are required.")
 
+    # Add date prefix in mm/dd/yy format
+    date_prefix = datetime.now().strftime("%m/%d/%y")
+    
     customer_payload = {
+        "Title": date_prefix,  # Add date as prefix/title
         "GivenName": first_name,
         "FamilyName": last_name,
         "PrimaryEmailAddr": {"Address": email}
