@@ -1,19 +1,14 @@
 components:
 - components:
   - components:
-    - layout_properties: {grid_position: 'FIDQJR,EDWBOQ'}
-      name: email_input
-      properties: {}
-      type: TextBox
-    - event_bindings: {click: create_invoice_button_click}
-      layout_properties: {grid_position: 'AZRJHK,YLEAUK'}
-      name: create_invoice_button
-      properties: {text: create_invoice_button_click}
-      type: Button
     - layout_properties: {grid_position: 'ZLJFLY,FOXQET'}
       name: label_2
-      properties: {align: left, text: Select a customer}
+      properties: {align: left, text: Search customers}
       type: Label
+    - layout_properties: {grid_position: 'HIWWOQ,VRXSPA'}
+      name: search_email
+      properties: {}
+      type: TextBox
     - event_bindings: {}
       layout_properties: {grid_position: 'YLJONE,VQTBOB'}
       name: customer_selector
@@ -52,19 +47,34 @@ components:
         name: label_6
         properties: {align: left, text: Email}
         type: Label
+      - layout_properties: {grid_position: 'RATFCW,IXLRTV MQLERL,TOWKRV'}
+        name: email_input
+        properties: {}
+        type: TextBox
+      - event_bindings: {click: create_customer_button_click}
+        layout_properties: {grid_position: 'RATFCW,IXLRTV RQPVCL,WSLMOF'}
+        name: create_customer_button
+        properties: {text: Create Customer}
+        type: Button
       - layout_properties: {grid_position: 'RATFCW,UNZDJH'}
         name: spacer_2
         properties: {height: 196.60992431640625}
         type: Spacer
       layout_properties: {grid_position: 'ACRQID,KXDPPQ'}
       name: outlined_card_1
-      properties: {col_widths: '{"SEUDFB":15,"JWBZYU":45,"VSIXEV":15,"GEAHYI":45,"JHMBLU":15,"IXLRTV":60,"UNZDJH":10,"THXWWD":10}', role: outlined-card}
+      properties: {col_widths: '{"SEUDFB":15,"JWBZYU":45,"VSIXEV":15,"GEAHYI":45,"JHMBLU":10,"IXLRTV":60,"UNZDJH":10,"THXWWD":10,"TOWKRV":37}', role: outlined-card}
       type: ColumnPanel
     layout_properties: {grid_position: 'NFUGQK,LJPWTT'}
     name: customer_card
     properties: {col_widths: '{}', role: outlined-card}
     type: ColumnPanel
-  - layout_properties: {grid_position: 'TUFSRQ,VFYKDH'}
+  - components:
+    - event_bindings: {click: create_invoice_button_click}
+      layout_properties: {grid_position: 'GEAJVK,GJEQCE'}
+      name: create_invoice_button
+      properties: {text: create_invoice_button_click}
+      type: Button
+    layout_properties: {grid_position: 'TUFSRQ,VFYKDH'}
     name: outlined_card_2
     properties: {role: outlined-card}
     type: ColumnPanel

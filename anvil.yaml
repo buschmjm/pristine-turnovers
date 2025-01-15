@@ -7,16 +7,27 @@ db_schema:
       name: stripeId
       type: string
     - admin_ui: {order: 1, width: 200}
-      name: name
+      name: firstName
       type: string
     - admin_ui: {order: 2, width: 200}
       name: email
       type: string
-    - admin_ui: {order: 3, width: 200}
-      name: company
+    - admin_ui: {order: 1.5, width: 200}
+      name: lastName
       type: string
     server: full
     title: Customers
+  tokens:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: key
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: value
+      type: string
+    server: full
+    title: tokens
   users:
     client: none
     columns:
@@ -73,9 +84,6 @@ secrets:
   intuit_client_secret:
     type: secret
     value: {4LX7L3LPHH3ODGI3: ylKJ8iL5LTDNlBSJ5GtV+SLgfPSMCZKG5ZyH2ug+Vz11/Lj7SSyzwWaBEOsOAjS8ctHX50aQTftCjaSdyh8aP21Fc3aeJix4qEsda4weXXFT2kmA33o6JYWMBJUdkEn0g8yjmpQKbtmkIO/mmeNQcvwOM38FEGKkT8b3K5TrEsQ1V6xFt2vJ}
-  intuit_refresh_token:
-    type: secret
-    value: {4LX7L3LPHH3ODGI3: 7Wuv7yZ4/gCBqnh+1RYluiksztyv1JqW3FMyH/5+KtoSWY7S6GrKANJ19Jq5G2XB671J7fC5LJ7Z5n2/RB5MTtOrqn/ebA3VKafLE03xIddaYtXvScSM7YIYFJyw5CvaLISSAznJJA6PqRDyLbJ3DoOw6I4aAjiBELN75UHwf0ow52hALBjwkhux3vhkXhyraA==}
   pristine_stripe_test_secret:
     type: secret
     value: {4LX7L3LPHH3ODGI3: NMVqOLfbigmd1Yfjzu2uUQJmj+ZYU4eLxvslHLcngucvipPs3+bEAncw0rhPFiZJWXrTAYU5Qpti6RSQaq+hQB8ISL0uFWI2ybztfRVsKkA+y3dd6IBPivycZi9E0xO29FgYFeHrucps/P9nLPHEoGRZ1b4Y4HZ+nPjmMlCD58VjOtkl+dcy9PZ38ej/U88Fe6eF2WdI1j+VfukWwtITbP2hcXGquMBA+tFiVzxm7I7t1e043XnHs+aHKOrqnKBzZnsvCB8ySCzjcA==}
