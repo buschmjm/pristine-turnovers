@@ -5,22 +5,22 @@ from datetime import datetime, timedelta
 
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
-        # Set Form properties and Data Bindings.
         self.init_components(**properties)
         self.ACTIVE_CUSTOMER_MONTHS = 3
         
         # Initialize dropdown with just the placeholder
-        self.customer_selector.items = [{'value': '', 'text': '-- Select to Load Customers --'}]
+        self.customer_selector.items = ['-- Select to Load Customers --']
         
-    def customer_selector_click(self, **event_args):
-        """This method is called when the customer selector is clicked"""
-        # Only populate if not already populated
-        if len(self.customer_selector.items) <= 1:
+    def customer_selector_change(self, **event_args):
+        """This method is called when an item is selected"""
+        if self.customer_selector.selected_value == '-- Select to Load Customers --':
             try:
                 recent_customers = anvil.server.call('get_recent_customers', self.ACTIVE_CUSTOMER_MONTHS)
-                self.customer_selector.items = [
-                    {'value': '', 'text': '-- Select Customer --'}
-                ] + recent_customers
+                # Convert the dictionary format to tuple format for dropdown
+                formatted_customers = [('-- Select Customer --', '')] + [
+                    (f"{c['text']}", c['value']) for c in recent_customers
+                ]
+                self.customer_selector.items = formatted_customers
             except Exception as e:
                 alert(f"Failed to load customer list: {str(e)}")
 
