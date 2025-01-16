@@ -1,10 +1,10 @@
 components:
 - layout_properties: {grid_position: 'IAAQLC,WKHCKI'}
-  name: name
+  name: name_label
   properties: {}
   type: Label
 - layout_properties: {grid_position: 'IAAQLC,DWWOTO'}
-  name: email
+  name: email_label
   properties: {}
   type: Label
 container: {type: ColumnPanel}
