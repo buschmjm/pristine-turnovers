@@ -8,6 +8,8 @@ class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
         self.load_customers()
+        # Set initial state
+        self.show_existing_customer()
       
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -61,3 +63,31 @@ class collectPayment(collectPaymentTemplate):
                      "Please use a different email or contact support if you believe this is an error.")
             else:
                 alert(f"Failed to create customer: {error_message}")
+
+    def show_existing_customer(self):
+        """Show existing customer card and hide new customer card"""
+        self.existing_customer.visible = True
+        self.new_customer.visible = False
+        # Update button states
+        self.existing_customer_button.background = '#2196F3'  # Active blue color
+        self.existing_customer_button.foreground = 'white'
+        self.new_customer_button.background = 'white'
+        self.new_customer_button.foreground = 'black'
+        
+    def show_new_customer(self):
+        """Show new customer card and hide existing customer card"""
+        self.existing_customer.visible = False
+        self.new_customer.visible = True
+        # Update button states
+        self.new_customer_button.background = '#2196F3'  # Active blue color
+        self.new_customer_button.foreground = 'white'
+        self.existing_customer_button.background = 'white'
+        self.existing_customer_button.foreground = 'black'
+        
+    def existing_customer_button_click(self, **event_args):
+        """Called when the existing customer button is clicked"""
+        self.show_existing_customer()
+        
+    def new_customer_button_click(self, **event_args):
+        """Called when the new customer button is clicked"""
+        self.show_new_customer()
