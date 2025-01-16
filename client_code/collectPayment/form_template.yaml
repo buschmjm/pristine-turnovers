@@ -10,7 +10,8 @@ components:
       properties: {height: 32}
       type: Spacer
     - components:
-      - name: repeating_panel_1
+      - layout_properties: {}
+        name: repeating_panel_1
         properties: {item_template: collectPayment.ItemTemplate1}
         type: RepeatingPanel
       layout_properties: {grid_position: 'ZDNZLO,CJKYRO'}
