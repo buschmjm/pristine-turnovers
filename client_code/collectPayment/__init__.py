@@ -6,18 +6,24 @@ from anvil.tables import app_tables
 
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
+        print("Starting form initialization...")  # Debug print
         self.init_components(**properties)
-        self.load_customers()
-        # Set initial state
         self.show_existing_customer()
-      
+        
+        # Simple direct load without delayed loading
+        self.load_customers()
+        print("Form initialization complete")  # Debug print
+            
     def load_customers(self):
         """Load all customers into the repeating panel"""
-        customers = anvil.server.call("customerQueries")
-        if customers:
-            self.repeating_panel_1.items = customers
-        else:
-            self.repeating_panel_1.items = []
+        print("Starting customer load...")  # Debug print
+        try:
+            customers = anvil.server.call("customerQueries")
+            print(f"Retrieved {len(customers)} customers")  # Debug print
+            self.repeating_panel_1.items = customers if customers else []
+        except Exception as e:
+            print(f"Error loading customers: {str(e)}")  # Debug print
+            alert("Failed to load customers. Please try refreshing the page.")
             
     def create_invoice_button_click(self, **event_args):
         """

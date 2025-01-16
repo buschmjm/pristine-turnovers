@@ -7,24 +7,11 @@ import anvil.server
 
 @anvil.server.callable
 def customerQueries(email=None, startDate=None, endDate=None, firstName=None, lastName=None):
-    # If all parameters are None, return all customers
-    if all(param is None for param in [email, startDate, endDate, firstName, lastName]):
-        return list(app_tables.customers.search())
-        
-    # Prepare keyword arguments for the search query
-    search_kwargs = {}
-    
-    # Add conditions only if variables are not empty
-    if email:
-        search_kwargs['email'] = email
-    if firstName:
-        search_kwargs['firstName'] = firstName
-    if lastName:
-        search_kwargs['lastName'] = lastName
-    if startDate and endDate:
-        search_kwargs['date'] = q.between(startDate, endDate, min_inclusive=True, max_inclusive=True)
-
-    # Execute the search with the prepared keyword arguments
-    query = app_tables.customers.search(**search_kwargs)
-
-    return list(query)
+    print("Starting customer query...")  # Debug print
+    try:
+        customers = list(app_tables.customers.search())
+        print(f"Found {len(customers)} customers")  # Debug print
+        return customers
+    except Exception as e:
+        print(f"Error in customerQueries: {str(e)}")  # Debug print
+        return []
