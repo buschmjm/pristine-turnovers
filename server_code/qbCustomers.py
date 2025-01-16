@@ -4,7 +4,7 @@ import json
 from anvil.tables import app_tables
 from . import qboUtils
 from . import accessRenewal
-from datetime import datetime, timedelta  # This is all we need
+from datetime import datetime, timedelta
 
 @anvil.server.callable
 def check_existing_customer(email):

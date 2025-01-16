@@ -7,15 +7,6 @@ from anvil.tables import app_tables
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
-        # Initialize dropdown with just the placeholder
-      
-    # Query the data table (replace 'People' with the name of your data table)
-        people = app_tables.customers.search()  # Use search() to fetch all rows
-        
-        # Set the items of the repeating panel to the query result
-        self.repeating_panel_1.items = [
-            {'name': person['name'], 'address': person['address']} for person in people
-        ]
       
     def create_invoice_button_click(self, **event_args):
         """
