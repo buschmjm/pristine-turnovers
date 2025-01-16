@@ -6,6 +6,18 @@ components:
       properties: {align: left, text: Search existing customers}
       type: Label
     - components:
+      - components:
+        - name: repeating_panel_1
+          properties: {item_template: collectPayment.RowTemplate1}
+          type: RepeatingPanel
+        layout_properties: {grid_position: 'FNRXIQ,VZWUMR'}
+        name: data_grid_1
+        properties:
+          columns:
+          - {data_key: column_1, id: JKSDUP, title: Column 1}
+          - {data_key: column_2, id: VJQQOR, title: Column 2}
+          - {data_key: column_3, id: OJLQEN, title: Column 3}
+        type: DataGrid
       - event_bindings: {change: customer_selector_change}
         layout_properties: {grid_position: 'JXDTQV,NFOGJI'}
         name: customer_selector
