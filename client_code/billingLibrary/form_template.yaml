@@ -8,13 +8,24 @@ components:
     name: data_grid_1
     properties:
       columns:
+      - {data_key: column_1, expand: false, id: CMFJUC, title: '', width: 49.039642333984375}
       - {data_key: name, id: WISGKV, title: Name}
       - {data_key: mattsCost, id: FHPBWW, title: Matts Cost}
-      - {data_key: cleanerCost, id: YIPPHI, title: Cleaner Cost}
+      - {data_key: cleanerCost, expand: false, id: YIPPHI, title: Cleaner Cost, width: 266.1485595703125}
+      - {data_key: column_1, expand: false, id: KTAMCD, title: '', width: 49.6634521484375}
     type: DataGrid
+  - layout_properties: {grid_position: 'PESORG,KGAPJO'}
+    name: spacer_1
+    properties: {height: 43.758453369140625}
+    type: Spacer
+  - event_bindings: {click: add_item_button_click}
+    layout_properties: {grid_position: 'PESORG,UHGHEC'}
+    name: add_item_button
+    properties: {align: center, icon: 'fa:plus', text: Add Item}
+    type: Button
   layout_properties: {slot: default}
   name: content_panel
-  properties: {}
+  properties: {col_widths: '{"KGAPJO":50,"UHGHEC":10}'}
   type: ColumnPanel
 - layout_properties: {slot: nav-right}
   name: navbar_links

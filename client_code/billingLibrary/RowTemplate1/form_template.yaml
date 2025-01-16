@@ -1,3 +1,33 @@
-components: []
+components:
+- layout_properties: {column: WISGKV}
+  name: name_label
+  properties: {}
+  type: Label
+- layout_properties: {column: FHPBWW}
+  name: matts_cost_label
+  properties: {}
+  type: Label
+- layout_properties: {column: YIPPHI}
+  name: cleaner_cost_label
+  properties: {}
+  type: Label
+- event_bindings: {click: edit_row_click}
+  layout_properties: {column: CMFJUC}
+  name: edit_row
+  properties:
+    icon: fa:edit
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+  type: Button
+- event_bindings: {click: deactivate_row_click}
+  layout_properties: {column: KTAMCD}
+  name: deactivate_row
+  properties:
+    icon: fa:remove
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+  type: Button
 container: {type: DataRowPanel}
 is_package: true
