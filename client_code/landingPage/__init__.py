@@ -20,9 +20,4 @@ class landingPage(landingPageTemplate):
 
   def collect_payment_button_click(self, **event_args):
     """This method is called when the button is clicked"""
-    # Show loading indicator before opening form
-    self.loading_indicator.visible = True
-    try:
-        anvil.open_form('collectPayment')
-    finally:
-        self.loading_indicator.visible = False
+    anvil.open_form('collectPayment')
