@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
-        self.ACTIVE_CUSTOMER_MONTHS = 3
         self.SEARCH_MIN_CHARS = 3  # Minimum characters before searching
         
     def customer_selector_change(self, **event_args):
