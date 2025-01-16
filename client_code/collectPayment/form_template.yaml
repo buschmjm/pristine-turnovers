@@ -6,27 +6,24 @@ components:
       properties: {align: left, text: Search existing customers}
       type: Label
     - components:
+      - layout_properties: {grid_position: 'QMRVQB,SLZNNW'}
+        name: customer_selector
+        properties: {}
+        type: TextBox
       - components:
-        - name: repeating_panel_1
+        - data_bindings: []
+          name: customers_panel
           properties: {item_template: collectPayment.RowTemplate1}
           type: RepeatingPanel
         layout_properties: {grid_position: 'FNRXIQ,VZWUMR'}
         name: data_grid_1
         properties:
           columns:
-          - {data_key: column_1, id: JKSDUP, title: Column 1}
-          - {data_key: column_2, id: VJQQOR, title: Column 2}
-          - {data_key: column_3, id: OJLQEN, title: Column 3}
+          - {data_key: firstName, id: IUJJBE, title: firstName}
+          - {data_key: lastName, id: DREYLT, title: lastName}
+          - {data_key: email, id: YKRRQH, title: email}
+          - {data_key: lastAccessed, id: MJNPXJ, title: lastAccessed}
         type: DataGrid
-      - event_bindings: {change: customer_selector_change}
-        layout_properties: {grid_position: 'JXDTQV,NFOGJI'}
-        name: customer_selector
-        properties: {}
-        type: TextBox
-      - layout_properties: {grid_position: 'ZVYSQB,TFKVVK'}
-        name: repeating_panel_2
-        properties: {item_template: collectPayment.ItemTemplate2}
-        type: RepeatingPanel
       layout_properties: {grid_position: 'ZQQJCB,ULCKOJ'}
       name: outlined_card_3
       properties: {role: outlined-card}
