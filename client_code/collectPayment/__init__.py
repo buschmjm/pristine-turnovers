@@ -7,7 +7,16 @@ from anvil.tables import app_tables
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
+        self.load_customers()
       
+    def load_customers(self):
+        """Load all customers into the repeating panel"""
+        customers = anvil.server.call("customerQueries")
+        if customers:
+            self.repeating_panel_1.items = customers
+        else:
+            self.repeating_panel_1.items = []
+            
     def create_invoice_button_click(self, **event_args):
         """
         Called when the 'Create Invoice' button is clicked.

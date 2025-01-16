@@ -7,6 +7,10 @@ import anvil.server
 
 @anvil.server.callable
 def customerQueries(email=None, startDate=None, endDate=None, firstName=None, lastName=None):
+    # If all parameters are None, return all customers
+    if all(param is None for param in [email, startDate, endDate, firstName, lastName]):
+        return list(app_tables.customers.search())
+        
     # Prepare keyword arguments for the search query
     search_kwargs = {}
     
