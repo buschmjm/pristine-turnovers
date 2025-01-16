@@ -1,11 +1,13 @@
 components:
 - components:
   - components:
-    - layout_properties: {grid_position: 'ZLJFLY,FOXQET IPYLGL,TLMTRV'}
+    - event_bindings: {click: existing_customer_button_click}
+      layout_properties: {grid_position: 'ZLJFLY,FOXQET IPYLGL,TLMTRV'}
       name: existing_customer_button
       properties: {text: Search Existing Customer}
       type: Button
-    - layout_properties: {grid_position: 'ZLJFLY,NMNMLA'}
+    - event_bindings: {click: new_customer_button_click}
+      layout_properties: {grid_position: 'ZLJFLY,NMNMLA'}
       name: new_customer_button
       properties: {text: Create New Customer}
       type: Button
