@@ -1,5 +1,19 @@
 allow_embedding: false
 db_schema:
+  billing_items:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: Name
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: Matt's Cost
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: Cleaner Cost
+      type: number
+    server: full
+    title: Billing Items
   customers:
     client: none
     columns:
