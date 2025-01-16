@@ -13,6 +13,6 @@ class ItemTemplate1(ItemTemplate1Template):
     
     # Get the item data from the properties passed to this template
     if 'item' in properties:
-      self.customer = properties['item']
-      self.name_label.text = f"{self.customer['firstName']} {self.customer['lastName']}"
-      self.email_label.text = self.customer['email']
+      customer = properties['item']
+      self.name_label.text = f"{customer['firstName']} {customer['lastName']}"
+      self.email_label.text = customer['email']
