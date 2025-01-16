@@ -2,28 +2,21 @@ from ._anvil_designer import collectPaymentTemplate
 from anvil import *
 import anvil.server
 from datetime import datetime, timedelta
+from anvil.tables import app_tables
 
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
         self.init_components(**properties)
-        self.ACTIVE_CUSTOMER_MONTHS = 3
-        
         # Initialize dropdown with just the placeholder
-        self.customer_selector.items = ['-- Select to Load Customers --']
+      
+    # Query the data table (replace 'People' with the name of your data table)
+        people = app_tables.customers.search()  # Use search() to fetch all rows
         
-    def customer_selector_change(self, **event_args):
-        """This method is called when an item is selected"""
-        if self.customer_selector.selected_value == '-- Select to Load Customers --':
-            try:
-                recent_customers = anvil.server.call('get_recent_customers', self.ACTIVE_CUSTOMER_MONTHS)
-                # Convert the dictionary format to tuple format for dropdown
-                formatted_customers = [('-- Select Customer --', '')] + [
-                    (f"{c['text']}", c['value']) for c in recent_customers
-                ]
-                self.customer_selector.items = formatted_customers
-            except Exception as e:
-                alert(f"Failed to load customer list: {str(e)}")
-
+        # Set the items of the repeating panel to the query result
+        self.repeating_panel_1.items = [
+            {'name': person['name'], 'address': person['address']} for person in people
+        ]
+      
     def create_invoice_button_click(self, **event_args):
         """
         Called when the 'Create Invoice' button is clicked.
