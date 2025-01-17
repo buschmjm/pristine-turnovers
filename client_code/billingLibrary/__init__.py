@@ -12,10 +12,18 @@ class billingLibrary(billingLibraryTemplate):
     self.show_active = True
     self.refresh_grid()
     
+  def is_active_view(self):
+    """Helper method to determine if we're in active view"""
+    return self.view_inactive_button.text == "View Inactive"
+    
   def refresh_grid(self):
     # Pull items from server
     items = anvil.server.call('get_billing_items', self.show_active)
     self.items_repeating_panel.items = items
+    
+    # Update edit buttons based on view state
+    for c in self.items_repeating_panel.get_components():
+      c.edit_row.visible = self.is_active_view()
     
     # Update button text
     self.view_inactive_button.text = (
