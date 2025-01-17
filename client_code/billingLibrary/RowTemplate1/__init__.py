@@ -90,9 +90,12 @@ class RowTemplate1(RowTemplate1Template):
       matts_cost = int(float(self.matts_cost_text_box.text) * 100)
       cleaner_cost = int(float(self.cleaner_cost_text_box.text) * 100)
 
-      # Check 30% markup using integer math
-      if matts_cost < (cleaner_cost * 13 // 10):
-        alert("Matt's cost must be at least 30% higher than cleaner cost.")
+      # Calculate minimum required matts_cost (130% of cleaner_cost)
+      min_matts_cost = (cleaner_cost * 13 // 10)
+      min_matts_dollars = f"${min_matts_cost//100}.{min_matts_cost%100:02d}"
+
+      if matts_cost < min_matts_cost:
+        alert(f"Matt's cost must be at least {min_matts_dollars} based on the cleaner cost entered.")
         return
         
       # Update on the server
