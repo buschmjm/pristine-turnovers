@@ -8,6 +8,7 @@ unique_ids:
     billingLibrary.RowTemplate1: '173706371785919865390985.74602'
     collectPayment: '1736795449575987147272917.5334'
     collectPayment.ItemTemplate1: '1737049083136298909030998.459'
+    collectPayment.RowTemplate2: '1737149408616236965467744.90268'
     landingPage: ADQ6KDRGH7Y2J5FZD4APXWPKCHOA2PGY
     nav_panel: '1737141360764846479426010.7551'
   modules: {}

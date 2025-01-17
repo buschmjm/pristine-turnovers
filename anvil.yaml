@@ -2,7 +2,22 @@ allow_embedding: false
 db_schema:
   billing_items:
     client: none
-    columns: []
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: itemName
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: costPer
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: quantity
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: totalCost
+      type: number
+    - admin_ui: {order: 4, width: 200}
+      name: tax
+      type: number
     server: full
     title: Billing Items
   billing_library:
@@ -27,7 +42,26 @@ db_schema:
     title: Billing Library
   bills:
     client: none
-    columns: []
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: id
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: relatedItems
+      target: billing_items
+      type: link_multiple
+    - admin_ui: {order: 2, width: 200}
+      name: subtotal
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: taxTotal
+      type: number
+    - admin_ui: {order: 4, width: 200}
+      name: grandTotal
+      type: number
+    - admin_ui: {order: 5, width: 200}
+      name: paid
+      type: bool
     server: full
     title: Bills
   customers:
