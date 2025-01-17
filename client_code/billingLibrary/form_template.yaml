@@ -9,9 +9,10 @@ components:
     properties:
       columns:
       - {data_key: column_1, expand: false, id: CMFJUC, title: '', width: 49.039642333984375}
-      - {data_key: name, id: WISGKV, title: Name}
-      - {data_key: mattsCost, id: FHPBWW, title: Matts Cost}
-      - {data_key: cleanerCost, expand: false, id: YIPPHI, title: Cleaner Cost, width: 268.47540283203125}
+      - {data_key: name, expand: false, id: WISGKV, title: Name, width: 298.9505310058594}
+      - {data_key: cleanerCost, expand: false, id: YIPPHI, title: Cleaner Cost, width: 123.9307861328125}
+      - {data_key: mattsCost, expand: false, id: FHPBWW, title: Matts Cost, width: 125.54461669921875}
+      - {data_key: column_1, expand: false, id: QFKQKN, title: 'Taxable?', width: 74.0594482421875}
       - {data_key: column_1, expand: false, id: KTAMCD, title: '', width: 49.6634521484375}
     type: DataGrid
   - event_bindings: {click: view_inactive_button_click}

@@ -72,5 +72,19 @@ components:
     text: ''
     visible: false
   type: Button
+- layout_properties: {column: QFKQKN}
+  name: taxable_label
+  properties: {}
+  type: Label
+- data_bindings: []
+  layout_properties: {column: QFKQKN}
+  name: taxable_check_box
+  properties:
+    align: right
+    checked: false
+    spacing:
+      padding: [null, '15', null, '0']
+    text: ''
+  type: CheckBox
 container: {type: DataRowPanel}
 is_package: true
