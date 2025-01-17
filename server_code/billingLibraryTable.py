@@ -7,14 +7,14 @@ import anvil.server
 
 @anvil.server.callable
 def get_billing_items(show_active=True):
-  return app_tables.billing_items.search(
+  return app_tables.billing_library.search(
     tables.order_by('name', ascending=True),
     active=show_active
   )
 
 @anvil.server.callable
 def create_billing_item():
-  row = app_tables.billing_items.add_row(
+  row = app_tables.billing_library.add_row(
     name='',
     mattsCost=0,
     cleanerCost=0,
@@ -25,7 +25,7 @@ def create_billing_item():
 
 @anvil.server.callable
 def update_billing_item(item_id, name, matts_cost, cleaner_cost, taxable):
-  row = app_tables.billing_items.get_by_id(item_id)
+  row = app_tables.billing_library.get_by_id(item_id)
   if row:
     row.update(
       name=name,
@@ -37,12 +37,12 @@ def update_billing_item(item_id, name, matts_cost, cleaner_cost, taxable):
 
 @anvil.server.callable
 def set_billing_item_active(item_id, is_active):
-  row = app_tables.billing_items.get_by_id(item_id)
+  row = app_tables.billing_library.get_by_id(item_id)
   if row:
     row.update(active=is_active)
 
 @anvil.server.callable
 def delete_billing_item(item_id):
-  row = app_tables.billing_items.get_by_id(item_id)
+  row = app_tables.billing_library.get_by_id(item_id)
   if row:
     row.delete()
