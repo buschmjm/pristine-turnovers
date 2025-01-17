@@ -16,10 +16,10 @@ class RowTemplate1(RowTemplate1Template):
     matts_pennies = self.item['mattsCost'] or 0
     cleaner_pennies = self.item['cleanerCost'] or 0
 
-    # Convert pennies to dollars using string formatting
+    # Convert pennies to dollars string (e.g., 199 pennies -> "$1.99")
     self.name_label.text = name
-    self.matts_cost_label.text = f"${matts_pennies/100:.2f}"
-    self.cleaner_cost_label.text = f"${cleaner_pennies/100:.2f}"
+    self.matts_cost_label.text = f"${matts_pennies//100}.{matts_pennies%100:02d}"
+    self.cleaner_cost_label.text = f"${cleaner_pennies//100}.{cleaner_pennies%100:02d}"
     
     # Set initial visibility
     self.set_edit_mode(False)
@@ -39,10 +39,12 @@ class RowTemplate1(RowTemplate1Template):
     self.cleaner_cost_label.visible = not editing
     
     if editing:
-      # Populate text boxes
+      # Show pennies divided by 100 in text boxes
       self.name_text_box.text = self.item['name']
-      self.matts_cost_text_box.text = str(self.item['mattsCost'])
-      self.cleaner_cost_text_box.text = str(self.item['cleanerCost'])
+      matts_pennies = self.item['mattsCost'] or 0
+      cleaner_pennies = self.item['cleanerCost'] or 0
+      self.matts_cost_text_box.text = f"{matts_pennies//100}.{matts_pennies%100:02d}"
+      self.cleaner_cost_text_box.text = f"{cleaner_pennies//100}.{cleaner_pennies%100:02d}"
       
   def enable_edit_mode(self):
     self.set_edit_mode(True)
