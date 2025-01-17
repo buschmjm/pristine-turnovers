@@ -5,7 +5,6 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from decimal import Decimal
 
 class RowTemplate1(RowTemplate1Template):
   def __init__(self, **properties):
@@ -17,13 +16,10 @@ class RowTemplate1(RowTemplate1Template):
     matts_pennies = self.item['mattsCost'] or 0
     cleaner_pennies = self.item['cleanerCost'] or 0
 
-    # Convert integer pennies to Decimal dollars for display
-    matts_val = Decimal(matts_pennies) / Decimal(100)
-    cleaner_val = Decimal(cleaner_pennies) / Decimal(100)
-
+    # Convert pennies to dollars using string formatting
     self.name_label.text = name
-    self.matts_cost_label.text = f"${matts_val:.2f}"
-    self.cleaner_cost_label.text = f"${cleaner_val:.2f}"
+    self.matts_cost_label.text = f"${matts_pennies/100:.2f}"
+    self.cleaner_cost_label.text = f"${cleaner_pennies/100:.2f}"
     
     # Set initial visibility
     self.set_edit_mode(False)
@@ -61,12 +57,12 @@ class RowTemplate1(RowTemplate1Template):
       return
       
     try:
-      # Convert user input (dollars) into pennies
-      matts_cost = int(Decimal(self.matts_cost_text_box.text) * 100)
-      cleaner_cost = int(Decimal(self.cleaner_cost_text_box.text) * 100)
+      # Convert dollar input to pennies using float * 100
+      matts_cost = int(float(self.matts_cost_text_box.text) * 100)
+      cleaner_cost = int(float(self.cleaner_cost_text_box.text) * 100)
 
-      # Enforce 30% rule using integer math: matts_cost >= 1.3 * cleaner_cost => 10*matts_cost >= 13*cleaner_cost
-      if 10 * matts_cost < 13 * cleaner_cost:
+      # Check 30% markup using integer math
+      if matts_cost < (cleaner_cost * 13 // 10):
         alert("Matt's cost must be at least 30% higher than cleaner cost!")
         return
         
@@ -82,7 +78,7 @@ class RowTemplate1(RowTemplate1Template):
       self.set_edit_mode(False)
       self.update_display()
       
-    except:
+    except ValueError:
       alert("Cost values must be valid numbers!")
 
   def deactivate_row_click(self, **event_args):
