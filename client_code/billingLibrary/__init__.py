@@ -17,3 +17,7 @@ class billingLibrary(billingLibraryTemplate):
   def add_item_button_click(self, **event_args):
     """This method is called when the button is clicked"""
     pass
+
+  def view_inactive_button_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass

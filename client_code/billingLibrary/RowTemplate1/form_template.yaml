@@ -29,5 +29,28 @@ components:
       padding: [null, '0', null, '0']
     text: ''
   type: Button
+- event_bindings: {click: activate_row_click}
+  layout_properties: {column: KTAMCD}
+  name: activate_row
+  properties:
+    icon: fa:check-square-o
+    icon_align: left
+    spacing:
+      padding: ['0', '0', '0', '0']
+    text: ''
+    visible: false
+  type: Button
+- layout_properties: {column: YIPPHI}
+  name: cleaner_cost_text_box
+  properties: {}
+  type: TextBox
+- layout_properties: {column: FHPBWW}
+  name: matts_cost_text_box
+  properties: {}
+  type: TextBox
+- layout_properties: {column: WISGKV}
+  name: name_text_box
+  properties: {}
+  type: TextBox
 container: {type: DataRowPanel}
 is_package: true

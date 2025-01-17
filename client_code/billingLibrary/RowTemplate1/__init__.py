@@ -21,3 +21,7 @@ class RowTemplate1(RowTemplate1Template):
   def edit_row_click(self, **event_args):
     """This method is called when the button is clicked"""
     pass
+
+  def activate_row_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass
