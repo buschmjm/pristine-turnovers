@@ -18,18 +18,20 @@ def create_billing_item():
     name='',
     mattsCost=0,
     cleanerCost=0,
-    active=True
+    active=True,
+    taxable=False
   )
   return row
 
 @anvil.server.callable
-def update_billing_item(item_id, name, matts_cost, cleaner_cost):
+def update_billing_item(item_id, name, matts_cost, cleaner_cost, taxable):
   row = app_tables.billing_items.get_by_id(item_id)
   if row:
     row.update(
       name=name,
       mattsCost=matts_cost,
-      cleanerCost=cleaner_cost
+      cleanerCost=cleaner_cost,
+      taxable=taxable
     )
     return row
 

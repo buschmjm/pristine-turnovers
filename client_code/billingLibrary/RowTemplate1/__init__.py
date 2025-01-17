@@ -26,6 +26,9 @@ class RowTemplate1(RowTemplate1Template):
     name = self.item['name']
     matts_pennies = self.item['mattsCost'] or 0
     cleaner_pennies = self.item['cleanerCost'] or 0
+    
+    # Add taxable display
+    self.taxable_label.text = "Yes" if self.item['taxable'] else "No"
 
     # Convert pennies to dollars string (e.g., 199 pennies -> "$1.99")
     self.name_label.text = name
@@ -42,6 +45,7 @@ class RowTemplate1(RowTemplate1Template):
     self.name_text_box.visible = editing
     self.matts_cost_text_box.visible = editing
     self.cleaner_cost_text_box.visible = editing
+    self.taxable_check_box.visible = editing
     self.save_row.visible = editing
     self.cancel_edit.visible = editing
     self.edit_row.visible = not editing
@@ -52,6 +56,7 @@ class RowTemplate1(RowTemplate1Template):
     self.name_label.visible = not editing
     self.matts_cost_label.visible = not editing
     self.cleaner_cost_label.visible = not editing
+    self.taxable_label.visible = not editing
     
     if editing:
       # Show pennies divided by 100 in text boxes
@@ -60,6 +65,7 @@ class RowTemplate1(RowTemplate1Template):
       cleaner_pennies = self.item['cleanerCost'] or 0
       self.matts_cost_text_box.text = f"{matts_pennies//100}.{matts_pennies%100:02d}"
       self.cleaner_cost_text_box.text = f"{cleaner_pennies//100}.{cleaner_pennies%100:02d}"
+      self.taxable_check_box.checked = self.item['taxable']
       
   def enable_edit_mode(self):
     self.set_edit_mode(True)
@@ -101,7 +107,8 @@ class RowTemplate1(RowTemplate1Template):
         self.item.get_id(),
         self.name_text_box.text,
         matts_cost,
-        cleaner_cost
+        cleaner_cost,
+        self.taxable_check_box.checked
       )
       
       self.set_edit_mode(False)
