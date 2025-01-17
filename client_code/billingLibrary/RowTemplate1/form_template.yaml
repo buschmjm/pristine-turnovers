@@ -52,5 +52,14 @@ components:
   name: name_text_box
   properties: {visible: false}
   type: TextBox
+- layout_properties: {column: CMFJUC}
+  name: save_row
+  properties:
+    icon: fa:save
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+    visible: false
+  type: Button
 container: {type: DataRowPanel}
 is_package: true
