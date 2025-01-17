@@ -51,8 +51,13 @@ class RowTemplate1(RowTemplate1Template):
       
   def enable_edit_mode(self):
     self.set_edit_mode(True)
-    # Add focus handler to detect clicks outside
-    self.parent.parent.set_event_handler('lost_focus', self.cancel_edit)
+    # Add key press handler for escape
+    self.name_text_box.set_event_handler('pressed_enter', self.save_row_click)
+    self.name_text_box.set_event_handler('pressed_escape', self.cancel_edit)
+    self.matts_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
+    self.matts_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit)
+    self.cleaner_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
+    self.cleaner_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit)
 
   def cancel_edit(self, **event_args):
     """Cancel editing when clicking outside"""
@@ -65,7 +70,7 @@ class RowTemplate1(RowTemplate1Template):
   def save_row_click(self, **event_args):
     # Validate inputs
     if not all([self.name_text_box.text, self.matts_cost_text_box.text, self.cleaner_cost_text_box.text]):
-      alert("All fields are required!")
+      alert("All fields are required.")
       return
       
     try:
@@ -75,7 +80,7 @@ class RowTemplate1(RowTemplate1Template):
 
       # Check 30% markup using integer math
       if matts_cost < (cleaner_cost * 13 // 10):
-        alert("Matt's cost must be at least 30% higher than cleaner cost!")
+        alert("Matt's cost must be at least 30% higher than cleaner cost.")
         return
         
       # Update on the server
@@ -91,7 +96,7 @@ class RowTemplate1(RowTemplate1Template):
       self.update_display()
       
     except ValueError:
-      alert("Cost values must be valid numbers!")
+      alert("Cost values must be valid numbers.")
 
   def deactivate_row_click(self, **event_args):
     anvil.server.call(

@@ -10,7 +10,14 @@ class billingLibrary(billingLibraryTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
     self.show_active = True
+    self.current_new_row = None
     self.refresh_grid()
+    
+  def form_click(self, **event_args):
+    """Handle clicks outside the editing area"""
+    if self.current_new_row:
+      self.cancel_new_row(self.current_new_row)
+      self.current_new_row = None
     
   def refresh_grid(self):
     # Pull items from server
@@ -24,6 +31,7 @@ class billingLibrary(billingLibraryTemplate):
 
   def add_item_button_click(self, **event_args):
     new_row = anvil.server.call('create_billing_item')
+    self.current_new_row = new_row
     
     # First refresh to show new row
     self.refresh_grid()
@@ -32,15 +40,13 @@ class billingLibrary(billingLibraryTemplate):
     for c in self.items_repeating_panel.get_components():
       if c.item == new_row:
         c.enable_edit_mode()
-        # Add focus handler to detect clicks outside for new rows
-        self.items_repeating_panel.set_event_handler('lost_focus', 
-          lambda **e: self.cancel_new_row(new_row))
         break
 
   def cancel_new_row(self, row):
     """Delete the row if user clicks away without saving"""
-    anvil.server.call('delete_billing_item', row.get_id())
-    self.refresh_grid()
+    if row:
+      anvil.server.call('delete_billing_item', row.get_id())
+      self.refresh_grid()
 
   def view_inactive_button_click(self, **event_args):
     self.show_active = not self.show_active
