@@ -4,6 +4,11 @@ components:
     - name: items_repeating_panel
       properties: {item_template: billingLibrary.RowTemplate1}
       type: RepeatingPanel
+    - event_bindings: {click: add_item_button_click}
+      layout_properties: {slot: footer}
+      name: add_item_button
+      properties: {align: center, background: '', icon: 'fa:plus', text: Add Item}
+      type: Button
     layout_properties: {grid_position: 'RDBZOX,YVBPIR'}
     name: billing_items_grid
     properties:
@@ -17,23 +22,18 @@ components:
       - {data_key: column_1, expand: false, id: KTAMCD, title: '', width: 49.6634521484375}
       foreground: theme:On Tertiary Container
     type: DataGrid
-  - event_bindings: {click: view_inactive_button_click}
-    layout_properties: {grid_position: 'PESORG,KGAPJO SPSKTG,JRZYEE'}
-    name: view_inactive_button
-    properties: {icon: 'fa:eye', icon_align: right, text: Show Deactivated Items}
-    type: Button
-  - layout_properties: {grid_position: 'PESORG,KGAPJO SPSKTG,YXNOIN'}
+  - layout_properties: {grid_position: 'PESORG,SIYAIW'}
     name: spacer_1
     properties: {height: 43.758453369140625}
     type: Spacer
-  - event_bindings: {click: add_item_button_click}
-    layout_properties: {grid_position: 'PESORG,UHGHEC'}
-    name: add_item_button
-    properties: {align: center, background: '', icon: 'fa:plus', text: Add Item}
+  - event_bindings: {click: view_inactive_button_click}
+    layout_properties: {grid_position: 'PESORG,IMFIUO'}
+    name: view_inactive_button
+    properties: {icon: 'fa:eye', icon_align: right, text: Show Deactivated Items}
     type: Button
   layout_properties: {slot: default}
   name: content_panel
-  properties: {background: '', col_widths: '{"KGAPJO":46,"UHGHEC":13,"JRZYEE":20,"YXNOIN":40}'}
+  properties: {background: '', col_widths: '{}'}
   type: ColumnPanel
 - layout_properties: {slot: nav-right}
   name: navbar_links
