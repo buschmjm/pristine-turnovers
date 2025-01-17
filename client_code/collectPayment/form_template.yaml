@@ -82,6 +82,10 @@ components:
     name: customer_card
     properties: {background: 'theme:Tertiary Container', col_widths: '{}', role: outlined-card}
     type: ColumnPanel
+  - layout_properties: {grid_position: 'CFSXCU,SWABCD'}
+    name: outlined_card_1
+    properties: {role: outlined-card}
+    type: ColumnPanel
   - components:
     - event_bindings: {click: create_invoice_button_click}
       layout_properties: {grid_position: 'GEAJVK,GJEQCE'}
