@@ -35,11 +35,10 @@ class RowTemplate1(RowTemplate1Template):
     self.matts_cost_label.text = f"${matts_pennies//100}.{matts_pennies%100:02d}"
     self.cleaner_cost_label.text = f"${cleaner_pennies//100}.{cleaner_pennies%100:02d}"
     
-    # Set initial visibility - modify to include active status for edit button
+    # Set initial visibility
     self.set_edit_mode(False)
     self.activate_row.visible = not self.item['active']
     self.deactivate_row.visible = self.item['active']
-    self.edit_row.visible = self.item['active']  # Only show edit for active items
     
   def set_edit_mode(self, editing):
     # Toggle visibility of edit components
@@ -49,8 +48,7 @@ class RowTemplate1(RowTemplate1Template):
     self.taxable_check_box.visible = editing
     self.save_row.visible = editing
     self.cancel_edit.visible = editing
-    # Only show edit button if not editing AND item is active
-    self.edit_row.visible = (not editing) and self.item['active']
+    self.edit_row.visible = not editing
     self.deactivate_row.visible = not editing and self.item['active']
     self.activate_row.visible = not editing and not self.item['active']
     
