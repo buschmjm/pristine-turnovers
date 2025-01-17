@@ -95,7 +95,7 @@ class RowTemplate1(RowTemplate1Template):
       min_matts_dollars = f"${min_matts_cost//100}.{min_matts_cost%100:02d}"
 
       if matts_cost < min_matts_cost:
-        alert(f"Matt's cost must be at least {min_matts_dollars} based on the cleaner cost entered.")
+        alert(f"Pristine's cost must be at least {min_matts_dollars} based on the contractor cost entered.")
         return
         
       # Update on the server
