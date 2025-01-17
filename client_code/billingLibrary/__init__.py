@@ -13,23 +13,21 @@ class billingLibrary(billingLibraryTemplate):
     self.refresh_grid()
     
   def refresh_grid(self):
-    # Correct Anvil query syntax
-    items = app_tables.billing_items.search(
-      tables.order_by('name', ascending=True),
-      active=self.show_active
-    )
+    # Pull items from server
+    items = anvil.server.call('get_billing_items', self.show_active)
     self.items_repeating_panel.items = items
     
-    # Update button visibility based on active/inactive view
-    self.view_inactive_button.text = "View Active" if not self.show_active else "View Inactive"
+    # Update button text
+    self.view_inactive_button.text = (
+      "View Active" if not self.show_active else "View Inactive"
+    )
 
   def add_item_button_click(self, **event_args):
-    # Add new empty row and open in edit mode
-    new_row = app_tables.billing_items.add_row(
-      name='', mattsCost=0, cleanerCost=0, active=True
-    )
+    # Create new row on the server
+    new_row = anvil.server.call('create_billing_item')
     self.refresh_grid()
-    # Find the new template and put it in edit mode
+    
+    # Enable edit mode on the newly created row
     for c in self.items_repeating_panel.get_components():
       if c.item == new_row:
         c.enable_edit_mode()

@@ -60,11 +60,13 @@ class RowTemplate1(RowTemplate1Template):
         alert("Matt's cost must be at least 30% higher than cleaner cost!")
         return
         
-      # Update database
-      self.item.update(
-        name=self.name_text_box.text,
-        mattsCost=matts_cost,
-        cleanerCost=cleaner_cost
+      # Update on the server
+      anvil.server.call(
+        'update_billing_item',
+        self.item.get_id(),
+        self.name_text_box.text,
+        matts_cost,
+        cleaner_cost
       )
       
       self.set_edit_mode(False)
@@ -74,11 +76,19 @@ class RowTemplate1(RowTemplate1Template):
       alert("Cost values must be valid numbers!")
 
   def deactivate_row_click(self, **event_args):
-    self.item.update(active=False)
+    anvil.server.call(
+      'set_billing_item_active',
+      self.item.get_id(),
+      False
+    )
     self.parent.parent.parent.refresh_grid()
 
   def activate_row_click(self, **event_args):
-    self.item.update(active=True)
+    anvil.server.call(
+      'set_billing_item_active',
+      self.item.get_id(),
+      True
+    )
     self.parent.parent.parent.refresh_grid()
 
   def form_show(self, **event_args):
