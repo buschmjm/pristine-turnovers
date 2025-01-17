@@ -23,15 +23,24 @@ class billingLibrary(billingLibraryTemplate):
     )
 
   def add_item_button_click(self, **event_args):
-    # Create new row on the server
     new_row = anvil.server.call('create_billing_item')
+    
+    # First refresh to show new row
     self.refresh_grid()
     
-    # Enable edit mode on the newly created row
+    # Then find and edit the new row
     for c in self.items_repeating_panel.get_components():
       if c.item == new_row:
         c.enable_edit_mode()
+        # Add focus handler to detect clicks outside for new rows
+        self.items_repeating_panel.set_event_handler('lost_focus', 
+          lambda **e: self.cancel_new_row(new_row))
         break
+
+  def cancel_new_row(self, row):
+    """Delete the row if user clicks away without saving"""
+    anvil.server.call('delete_billing_item', row.get_id())
+    self.refresh_grid()
 
   def view_inactive_button_click(self, **event_args):
     self.show_active = not self.show_active

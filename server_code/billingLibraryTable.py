@@ -38,3 +38,9 @@ def set_billing_item_active(item_id, is_active):
   row = app_tables.billing_items.get_by_id(item_id)
   if row:
     row.update(active=is_active)
+
+@anvil.server.callable
+def delete_billing_item(item_id):
+  row = app_tables.billing_items.get_by_id(item_id)
+  if row:
+    row.delete()

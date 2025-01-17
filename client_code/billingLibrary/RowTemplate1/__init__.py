@@ -10,6 +10,8 @@ class RowTemplate1(RowTemplate1Template):
   def __init__(self, **properties):
     self.init_components(**properties)
     self.update_display()
+    self.edit_row.visible = True
+    self.save_row.visible = False
     
   def update_display(self):
     name = self.item['name']
@@ -32,6 +34,7 @@ class RowTemplate1(RowTemplate1Template):
     self.matts_cost_text_box.visible = editing
     self.cleaner_cost_text_box.visible = editing
     self.save_row.visible = editing
+    self.edit_row.visible = not editing
     
     # Toggle visibility of display components
     self.name_label.visible = not editing
@@ -48,6 +51,13 @@ class RowTemplate1(RowTemplate1Template):
       
   def enable_edit_mode(self):
     self.set_edit_mode(True)
+    # Add focus handler to detect clicks outside
+    self.parent.parent.set_event_handler('lost_focus', self.cancel_edit)
+
+  def cancel_edit(self, **event_args):
+    """Cancel editing when clicking outside"""
+    self.set_edit_mode(False)
+    self.update_display()
 
   def edit_row_click(self, **event_args):
     self.enable_edit_mode()
@@ -89,7 +99,7 @@ class RowTemplate1(RowTemplate1Template):
       self.item.get_id(),
       False
     )
-    self.parent.parent.parent.refresh_grid()
+    get_open_form().refresh_grid()
 
   def activate_row_click(self, **event_args):
     anvil.server.call(
@@ -97,7 +107,7 @@ class RowTemplate1(RowTemplate1Template):
       self.item.get_id(),
       True
     )
-    self.parent.parent.parent.refresh_grid()
+    get_open_form().refresh_grid()
 
   def form_show(self, **event_args):
     self.update_display()
