@@ -80,7 +80,7 @@ components:
       type: ColumnPanel
     layout_properties: {grid_position: 'NFUGQK,LJPWTT'}
     name: customer_card
-    properties: {col_widths: '{}', role: outlined-card}
+    properties: {background: 'theme:Tertiary Container', col_widths: '{}', role: outlined-card}
     type: ColumnPanel
   - components:
     - event_bindings: {click: create_invoice_button_click}
@@ -100,9 +100,16 @@ components:
   name: navbar_links
   properties: {}
   type: FlowPanel
+- layout_properties: {slot: left-nav}
+  name: nav_panel_1
+  properties: {}
+  type: form:nav_panel
 - layout_properties: {slot: title}
   name: label_1
-  properties: {text: Payment Collection Form}
+  properties:
+    spacing:
+      padding: ['8', null, '8', null]
+    text: Payment Collection Form
   type: Label
 container:
   properties: {html: '@theme:standard-page.html'}

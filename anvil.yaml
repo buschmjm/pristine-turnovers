@@ -2,6 +2,11 @@ allow_embedding: false
 db_schema:
   billing_items:
     client: none
+    columns: []
+    server: full
+    title: Billing Items
+  billing_library:
+    client: none
     columns:
     - admin_ui: {order: 0, width: 200}
       name: name
@@ -19,7 +24,12 @@ db_schema:
       name: taxable
       type: bool
     server: full
-    title: Billing Items
+    title: Billing Library
+  bills:
+    client: none
+    columns: []
+    server: full
+    title: Bills
   customers:
     client: none
     columns:

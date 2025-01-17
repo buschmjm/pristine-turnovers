@@ -14,11 +14,3 @@ class landingPage(landingPageTemplate):
     anvil.server.call("customerQueries")
 
     # Any code you write here will run before the form opens.
-
-  def collect_payment_button_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    anvil.open_form('collectPayment')
-
-  def billing_library_button_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    anvil.open_form('billingLibrary')
