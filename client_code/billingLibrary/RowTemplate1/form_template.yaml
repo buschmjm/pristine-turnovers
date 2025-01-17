@@ -42,15 +42,15 @@ components:
   type: Button
 - layout_properties: {column: YIPPHI}
   name: cleaner_cost_text_box
-  properties: {}
+  properties: {visible: false}
   type: TextBox
 - layout_properties: {column: FHPBWW}
   name: matts_cost_text_box
-  properties: {}
+  properties: {visible: false}
   type: TextBox
 - layout_properties: {column: WISGKV}
   name: name_text_box
-  properties: {}
+  properties: {visible: false}
   type: TextBox
 container: {type: DataRowPanel}
 is_package: true
