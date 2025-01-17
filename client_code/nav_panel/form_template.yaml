@@ -12,7 +12,7 @@ components:
       font_size: 20
       foreground: ''
       spacing:
-        margin: ['0', null, '0', null]
+        margin: ['10', null, '10', null]
         padding: ['15', '45', '15', '45']
       text: Collect Payment
     type: Button
@@ -23,6 +23,7 @@ components:
       font_size: 20
       foreground: ''
       spacing:
+        margin: ['10', null, '10', null]
         padding: ['15', '45', '15', '45']
       text: Billing Library
     type: Button
@@ -30,6 +31,8 @@ components:
   name: nav_panel
   properties: {background: ''}
   type: LinearPanel
-container: {type: ColumnPanel}
+container:
+  properties: {col_widths: '{"QLTDWX":60}'}
+  type: ColumnPanel
 custom_component: true
 is_package: true
