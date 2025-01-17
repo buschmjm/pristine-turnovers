@@ -14,7 +14,7 @@ class billingLibrary(billingLibraryTemplate):
     
   def is_active_view(self):
     """Helper method to determine if we're in active view"""
-    return self.view_inactive_button.text == "View Active"  # Changed from "View Inactive" to "View Active"
+    return self.view_inactive_button.text == "View Inactive"  # Changed back to View Inactive
     
   def refresh_grid(self):
     # Pull items from server
