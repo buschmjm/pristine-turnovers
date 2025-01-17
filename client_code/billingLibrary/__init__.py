@@ -13,12 +13,11 @@ class billingLibrary(billingLibraryTemplate):
     self.refresh_grid()
     
   def refresh_grid(self):
-    # Query items and sort by name - corrected syntax
-    items = app_tables.billing_items.search(
-      active=self.show_active,
-      tables.order_by("name")
-    )
-    self.items_repeating_panel.items = items
+    # Proper Anvil query syntax using q.fetch()
+    query = q.fetch(app_tables.billing_items)
+    query = query.where(q.prop('active') == self.show_active)
+    query = query.sort('name')
+    self.items_repeating_panel.items = query
     
     # Update button visibility based on active/inactive view
     self.view_inactive_button.text = "View Active" if not self.show_active else "View Inactive"
