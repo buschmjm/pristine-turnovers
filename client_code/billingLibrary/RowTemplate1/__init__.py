@@ -9,6 +9,45 @@ from anvil.tables import app_tables
 class RowTemplate1(RowTemplate1Template):
   def __init__(self, **properties):
     self.init_components(**properties)
+    
+    # Style labels
+    for label in [self.name_label, self.matts_cost_label, 
+                 self.cleaner_cost_label, self.taxable_label]:
+      label.font_size = 14
+      label.font = 'Roboto'
+      
+    # Style text boxes
+    for textbox in [self.name_text_box, self.matts_cost_text_box, 
+                   self.cleaner_cost_text_box]:
+      textbox.font_size = 14
+      textbox.border = '1px solid #BDBDBD'
+      textbox.background = '#F5F5F5'
+      
+    # Style action buttons
+    self.edit_row.background = '#2196F3'  # Blue
+    self.edit_row.foreground = 'white'
+    self.edit_row.role = 'raised'
+    
+    self.save_row.background = '#4CAF50'  # Green
+    self.save_row.foreground = 'white'
+    self.save_row.role = 'raised'
+    
+    self.cancel_edit.background = '#F44336'  # Red
+    self.cancel_edit.foreground = 'white'
+    self.cancel_edit.role = 'raised'
+    
+    self.activate_row.background = '#4CAF50'  # Green
+    self.activate_row.foreground = 'white'
+    self.activate_row.role = 'outlined'
+    
+    self.deactivate_row.background = '#F44336'  # Red
+    self.deactivate_row.foreground = 'white'
+    self.deactivate_row.role = 'outlined'
+    
+    # Style the checkbox
+    self.taxable_check_box.font_size = 14
+    self.taxable_check_box.foreground = '#424242'
+    
     self.update_display()
     # Set initial button visibility
     self.edit_row.visible = True
