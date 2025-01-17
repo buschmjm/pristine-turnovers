@@ -116,3 +116,7 @@ class RowTemplate1(RowTemplate1Template):
 
   def form_show(self, **event_args):
     self.update_display()
+
+  def cancel_edit_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass

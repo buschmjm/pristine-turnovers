@@ -24,7 +24,7 @@ components:
   layout_properties: {column: KTAMCD}
   name: deactivate_row
   properties:
-    icon: fa:remove
+    icon: fa:archive
     spacing:
       padding: [null, '0', null, '0']
     text: ''
@@ -33,7 +33,7 @@ components:
   layout_properties: {column: KTAMCD}
   name: activate_row
   properties:
-    icon: fa:check-square-o
+    icon: fa:plus-square
     icon_align: left
     spacing:
       padding: ['0', '0', '0', '0']
@@ -57,6 +57,16 @@ components:
   name: save_row
   properties:
     icon: fa:save
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+    visible: false
+  type: Button
+- event_bindings: {click: cancel_edit_click}
+  layout_properties: {column: KTAMCD}
+  name: cancel_edit
+  properties:
+    icon: fa:remove
     spacing:
       padding: [null, '0', null, '0']
     text: ''
