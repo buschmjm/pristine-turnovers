@@ -10,16 +10,6 @@ import anvil
 class landingPage(landingPageTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
-    
-    # Style the main navigation buttons
-    for button in [self.collect_payment_button, self.billing_library_button]:
-      button.background = '#1976D2'  # Material Design primary blue
-      button.foreground = 'white'
-      button.font_size = 18
-      button.font = 'Roboto'
-      button.role = 'raised'
-      button.border = '0px'
-
     # Pre-warm the server connection
     anvil.server.call("customerQueries")
 

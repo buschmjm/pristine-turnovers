@@ -9,23 +9,6 @@ import anvil.users
 class billingLibrary(billingLibraryTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
-    
-    # Style the action buttons
-    self.add_item_button.background = '#4CAF50'  # Material green
-    self.add_item_button.foreground = 'white'
-    self.add_item_button.font_size = 16
-    self.add_item_button.role = 'raised'
-    
-    self.view_inactive_button.background = '#FF9800'  # Material orange
-    self.view_inactive_button.foreground = 'white'
-    self.view_inactive_button.font_size = 16
-    self.view_inactive_button.role = 'raised'
-    
-    # Style the grid
-    self.billing_items_grid.bold_headers = True
-    self.billing_items_grid.background = '#FFFFFF'
-    self.billing_items_grid.border = '1px solid #E0E0E0'
-    
     self.show_active = True
     self.refresh_grid()
     
