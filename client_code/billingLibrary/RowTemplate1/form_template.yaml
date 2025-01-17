@@ -52,7 +52,8 @@ components:
   name: name_text_box
   properties: {visible: false}
   type: TextBox
-- layout_properties: {column: CMFJUC}
+- event_bindings: {click: save_row_click}
+  layout_properties: {column: CMFJUC}
   name: save_row
   properties:
     icon: fa:save
