@@ -13,10 +13,10 @@ class billingLibrary(billingLibraryTemplate):
     self.refresh_grid()
     
   def refresh_grid(self):
-    # Query items and sort by name - fixed syntax
+    # Query items and sort by name - corrected syntax
     items = app_tables.billing_items.search(
-      q.order_by('name'),
-      active=self.show_active
+      active=self.show_active,
+      tables.order_by("name")
     )
     self.items_repeating_panel.items = items
     
