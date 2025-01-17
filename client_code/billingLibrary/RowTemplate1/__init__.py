@@ -10,8 +10,17 @@ class RowTemplate1(RowTemplate1Template):
   def __init__(self, **properties):
     self.init_components(**properties)
     self.update_display()
+    # Set initial button visibility
     self.edit_row.visible = True
     self.save_row.visible = False
+    self.cancel_edit.visible = False
+    
+    # Add tooltips to buttons
+    self.edit_row.tooltip = "Edit this item"
+    self.save_row.tooltip = "Save changes"
+    self.cancel_edit.tooltip = "Cancel changes"
+    self.activate_row.tooltip = "Make item active"
+    self.deactivate_row.tooltip = "Make item inactive"
     
   def update_display(self):
     name = self.item['name']
@@ -34,7 +43,10 @@ class RowTemplate1(RowTemplate1Template):
     self.matts_cost_text_box.visible = editing
     self.cleaner_cost_text_box.visible = editing
     self.save_row.visible = editing
+    self.cancel_edit.visible = editing
     self.edit_row.visible = not editing
+    self.deactivate_row.visible = not editing and self.item['active']
+    self.activate_row.visible = not editing and not self.item['active']
     
     # Toggle visibility of display components
     self.name_label.visible = not editing
@@ -53,14 +65,14 @@ class RowTemplate1(RowTemplate1Template):
     self.set_edit_mode(True)
     # Add key press handler for escape
     self.name_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.name_text_box.set_event_handler('pressed_escape', self.cancel_edit)
+    self.name_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
     self.matts_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.matts_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit)
+    self.matts_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
     self.cleaner_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.cleaner_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit)
+    self.cleaner_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
 
-  def cancel_edit(self, **event_args):
-    """Cancel editing when clicking outside"""
+  def cancel_edit_click(self, **event_args):
+    """This method is called when the cancel button is clicked"""
     self.set_edit_mode(False)
     self.update_display()
 
@@ -116,7 +128,3 @@ class RowTemplate1(RowTemplate1Template):
 
   def form_show(self, **event_args):
     self.update_display()
-
-  def cancel_edit_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    pass
