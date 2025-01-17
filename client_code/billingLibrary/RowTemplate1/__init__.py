@@ -69,13 +69,7 @@ class RowTemplate1(RowTemplate1Template):
       
   def enable_edit_mode(self):
     self.set_edit_mode(True)
-    # Add key press handler for escape
-    self.name_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.name_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
-    self.matts_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.matts_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
-    self.cleaner_cost_text_box.set_event_handler('pressed_enter', self.save_row_click)
-    self.cleaner_cost_text_box.set_event_handler('pressed_escape', self.cancel_edit_click)
+    # Remove all event handler code - we're using buttons instead
 
   def cancel_edit_click(self, **event_args):
     """This method is called when the cancel button is clicked"""
