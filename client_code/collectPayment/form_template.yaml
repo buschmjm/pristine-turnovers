@@ -83,6 +83,10 @@ components:
     properties: {background: 'theme:Tertiary Container', col_widths: '{}', role: outlined-card}
     type: ColumnPanel
   - components:
+    - layout_properties: {grid_position: 'IXRHLV,LSUFXO'}
+      name: customer_name
+      properties: {}
+      type: Label
     - components:
       - name: repeating_panel_2
         properties: {item_template: collectPayment.RowTemplate2}
