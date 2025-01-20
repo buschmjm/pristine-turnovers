@@ -20,15 +20,6 @@ components:
       padding: [null, '0', null, '0']
     text: ''
   type: Button
-- event_bindings: {click: deactivate_row_click}
-  layout_properties: {column: KTAMCD}
-  name: deactivate_row
-  properties:
-    icon: fa:archive
-    spacing:
-      padding: [null, '0', null, '0']
-    text: ''
-  type: Button
 - event_bindings: {click: activate_row_click}
   layout_properties: {column: KTAMCD}
   name: activate_row
@@ -62,8 +53,25 @@ components:
     text: ''
     visible: false
   type: Button
+- layout_properties: {column: QFKQKN}
+  name: taxable_label
+  properties: {}
+  type: Label
+- layout_properties: {column: 'null'}
+  name: spacer_1
+  properties: {height: 32}
+  type: Spacer
+- event_bindings: {click: deactivate_row_click}
+  layout_properties: {column: CMFJUC}
+  name: deactivate_row
+  properties:
+    icon: fa:archive
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+  type: Button
 - event_bindings: {click: cancel_edit_click}
-  layout_properties: {column: KTAMCD}
+  layout_properties: {column: CMFJUC}
   name: cancel_edit
   properties:
     icon: fa:remove
@@ -72,12 +80,8 @@ components:
     text: ''
     visible: false
   type: Button
-- layout_properties: {column: QFKQKN}
-  name: taxable_label
-  properties: {}
-  type: Label
 - data_bindings: []
-  layout_properties: {column: QFKQKN}
+  layout_properties: {column: CMFJUC}
   name: taxable_check_box
   properties:
     align: right
@@ -86,5 +90,7 @@ components:
       padding: [null, '15', null, '0']
     text: ''
   type: CheckBox
-container: {type: DataRowPanel}
+container:
+  properties: {align: center}
+  type: DataRowPanel
 is_package: true
