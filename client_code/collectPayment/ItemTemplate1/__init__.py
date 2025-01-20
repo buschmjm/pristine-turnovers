@@ -16,3 +16,7 @@ class ItemTemplate1(ItemTemplate1Template):
       customer = properties['item']
       self.name_label.text = f"{customer['firstName']} {customer['lastName']}"
       self.email_label.text = customer['email']
+
+  def select_customer_button_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass
