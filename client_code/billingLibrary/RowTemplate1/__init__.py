@@ -10,6 +10,7 @@ class RowTemplate1(RowTemplate1Template):
   def __init__(self, **properties):
     self.init_components(**properties)
     self.update_display()
+    self.is_new_item = False  # Add flag for new items
     # Set initial button visibility
     self.edit_row.visible = True
     self.save_row.visible = False
@@ -73,6 +74,10 @@ class RowTemplate1(RowTemplate1Template):
 
   def cancel_edit_click(self, **event_args):
     """This method is called when the cancel button is clicked"""
+    if self.is_new_item:
+      # Delete the row if it was a new item
+      anvil.server.call('delete_billing_item', self.item.get_id())
+    
     self.set_edit_mode(False)
     self.update_display()
     get_open_form().refresh_grid()  # Add refresh after cancel
@@ -109,6 +114,7 @@ class RowTemplate1(RowTemplate1Template):
         self.taxable_check_box.checked
       )
       
+      self.is_new_item = False  # No longer a new item after successful save
       self.set_edit_mode(False)
       self.update_display()
       get_open_form().refresh_grid()  # Add refresh after save
