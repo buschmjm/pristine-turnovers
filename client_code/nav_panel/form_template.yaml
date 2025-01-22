@@ -27,6 +27,18 @@ components:
         padding: ['15', '45', '15', '45']
       text: Billing Library
     type: Button
+  - event_bindings: {click: collect_payment_button_click}
+    layout_properties: {}
+    name: settings_button
+    properties:
+      bold: false
+      font_size: 20
+      foreground: ''
+      spacing:
+        margin: ['10', null, '10', null]
+        padding: ['15', '45', '15', '45']
+      text: Settings
+    type: Button
   layout_properties: {grid_position: 'WMWXQC,QLTDWX'}
   name: nav_panel
   properties: {background: ''}

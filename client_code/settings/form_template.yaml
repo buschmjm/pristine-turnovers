@@ -1,0 +1,58 @@
+components:
+- components:
+  - components:
+    - name: cleaner_card
+      properties: {role: outlined-card}
+      type: ColumnPanel
+    - components:
+      - layout_properties: {grid_position: 'ETOOJE,CLCDNU'}
+        name: label_2
+        properties: {text: Tax Rate}
+        type: Label
+      - layout_properties: {grid_position: 'ETOOJE,KMKNRV QOWWFW,KRHPUJ'}
+        name: tax_percentage_label
+        properties: {}
+        type: Label
+      - event_bindings: {pressed_enter: tax_percentage_text_box_pressed_enter}
+        layout_properties: {grid_position: 'ETOOJE,KMKNRV IQEAAW,NMPAPX'}
+        name: tax_percentage_text_box
+        properties: {visible: false}
+        type: TextBox
+      - event_bindings: {click: edit_tax_rate_click}
+        layout_properties: {grid_position: 'ETOOJE,KMKNRV BUQDRS,DXQYTH'}
+        name: edit_tax_rate
+        properties: {align: right, icon: 'fa:edit', text: ''}
+        type: Button
+      - event_bindings: {click: save_tax_rate_click}
+        layout_properties: {grid_position: 'ETOOJE,KMKNRV FPVZPA,NIHQNY'}
+        name: save_tax_rate
+        properties: {align: right, icon: 'fa:save', text: '', visible: false}
+        type: Button
+      layout_properties: {}
+      name: admin_card
+      properties: {col_widths: '{"CLCDNU":30,"KMKNRV":30}', role: outlined-card}
+      type: ColumnPanel
+    layout_properties: {grid_position: 'LIDXWS,BXABPA'}
+    name: linear_panel_1
+    properties: {}
+    type: LinearPanel
+  layout_properties: {slot: default}
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+- layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+- layout_properties: {slot: left-nav}
+  name: nav_panel_1
+  properties: {}
+  type: form:nav_panel
+- layout_properties: {slot: title}
+  name: label_1
+  properties: {text: Settings}
+  type: Label
+container:
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true
