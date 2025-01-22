@@ -14,29 +14,28 @@ class RowTemplate2(RowTemplate2Template):
       self.setup_initial_state()
     else:
       self.update_display()
-    self.quantity_entry_box.text = "1"  # Set default quantity in constructor
 
   def setup_initial_state(self):
     """Set up initial component visibility for new rows"""
-    # Show edit panel
+    # Show edit panel with dropdown and quantity box
     self.edit_item_panel.visible = True
     
     # Hide display components
     self.billing_item_name_label.visible = False
     self.cost_each_label.visible = False
-    self.quantity_entry_box.visible = False
+    self.quantity_label.visible = False  # Hide quantity label
     self.tax_cost_label.visible = False
     self.item_total_label.visible = False
     self.edit_billing_item.visible = False
     
     # Load dropdown options
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
-    print(f"Loaded {len(billing_items)} items for dropdown")
     self.add_item_selector_dropdown.items = [
       (item['display'], item['value']) for item in billing_items
     ]
+    
+    # Set default quantity
     self.quantity_entry_box.text = "1"
-    # Store quantity in item data
     if isinstance(self.item, dict):
       self.item['quantity'] = 1
 
@@ -68,20 +67,13 @@ class RowTemplate2(RowTemplate2Template):
     # Display item details
     self.billing_item_name_label.text = selected_item['name']
     self.cost_each_label.text = f"${selected_item['mattsCost']//100}.{selected_item['mattsCost']%100:02d}"
+    self.quantity_label.text = str(self.item.get('quantity', 1))
     
-    # Display quantity
-    quantity = self.item.get('quantity', 1)
-    self.quantity_label.text = str(quantity)
-    
-    # Display tax and total (only updated after save)
-    subtotal = selected_item['mattsCost'] * quantity
-    if selected_item['taxable']:
-      tax = int(subtotal * self.item.get('tax_amount', 0))
-      self.tax_cost_label.text = f"${tax//100}.{tax%100:02d}"
-    else:
-      self.tax_cost_label.text = "$0.00"
-      
-    total = subtotal + int(self.item.get('tax_amount', 0))
+    # Display tax and total
+    subtotal = selected_item['mattsCost'] * self.item.get('quantity', 1)
+    tax_amount = self.item.get('tax_amount', 0)
+    self.tax_cost_label.text = f"${tax_amount//100}.{tax_amount%100:02d}"
+    total = subtotal + tax_amount
     self.item_total_label.text = f"${total//100}.{total%100:02d}"
     
   def add_item_selector_dropdown_change(self, **event_args):
@@ -132,7 +124,7 @@ class RowTemplate2(RowTemplate2Template):
     selected_item = self.add_item_selector_dropdown.selected_value
     quantity = int(self.quantity_entry_box.text or 1)
     
-    # Calculate tax at save time
+    # Calculate tax
     subtotal = selected_item['mattsCost'] * quantity
     if selected_item['taxable']:
       tax_rate = anvil.server.call('get_tax_rate')
@@ -140,15 +132,12 @@ class RowTemplate2(RowTemplate2Template):
     else:
       tax_amount = 0
     
-    # Update the item dictionary with all values
+    # Update item data
     self.item.update({
       'billing_item': selected_item,
       'quantity': quantity,
       'tax_amount': tax_amount
     })
-    
-    # Update display components
-    self.quantity_label.text = str(quantity)
     
     # Switch visibility
     self.edit_item_panel.visible = False
