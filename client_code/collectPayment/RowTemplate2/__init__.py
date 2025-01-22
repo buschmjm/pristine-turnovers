@@ -93,7 +93,7 @@ class RowTemplate2(RowTemplate2Template):
       alert("Please select an item")
       return
       
-    # Get the full item data from the selected value
+    # The selected value now contains the full item data
     selected_item = self.add_item_selector_dropdown.selected_value
     
     # Update the item dictionary

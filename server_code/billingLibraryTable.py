@@ -50,17 +50,14 @@ def delete_billing_item(item_id):
 @anvil.server.callable
 def get_active_billing_items_for_dropdown():
   """Get active billing items formatted for dropdown"""
-  # Fix argument order - always put tables.order_by before keyword arguments
   items = app_tables.billing_library.search(
-    tables.order_by('name'),  # Positional argument first
-    active=True              # Keyword arguments after
+    tables.order_by('name'),
+    active=True
   )
-  # Format items for dropdown
-  dropdown_items = []
-  for item in items:
-    formatted_item = {
+  # Return the full item data for each row
+  return [
+    {
       'display': f"{item['name']} - ${item['mattsCost']//100}.{item['mattsCost']%100:02d}",
-      'value': item.get_id()  # Store just the ID instead of full dict
-    }
-    dropdown_items.append(formatted_item)
-  return dropdown_items
+      'value': dict(item)  # Return full item data instead of just ID
+    } for item in items
+  ]
