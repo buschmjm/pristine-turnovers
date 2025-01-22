@@ -97,3 +97,7 @@ class collectPayment(collectPaymentTemplate):
     def new_customer_button_click(self, **event_args):
         """Called when the new customer button is clicked"""
         self.show_new_customer()
+
+    def re_select_customer_button_click(self, **event_args):
+      """This method is called when the button is clicked"""
+      pass
