@@ -173,9 +173,9 @@ class collectPayment(collectPaymentTemplate):
 
     def refresh_bill_items(self):
         """Refresh the bill items grid"""
-        updated_items = list(self.bill_items)
-        self.bill_items_list.items = updated_items
-        self.bill_items_list.refresh()
+        temp_items = list(self.bill_items)  # Create a new list instance
+        self.bill_items_list.items = None   # Clear the list
+        self.bill_items_list.items = temp_items  # Set new list
     
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
@@ -183,11 +183,7 @@ class collectPayment(collectPaymentTemplate):
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
         print(f"Current bill items count: {len(self.bill_items)}")  # Debug print
-        
-        # Create new list instance to force refresh
-        updated_items = list(self.bill_items)
-        self.bill_items_list.items = updated_items
-        self.bill_items_list.refresh()  # Force repeating panel refresh
+        self.refresh_bill_items()
         print("Refreshed bill_items_list")
 
     def remove_bill_item(self, item):
