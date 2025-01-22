@@ -46,3 +46,11 @@ def delete_billing_item(item_id):
   row = app_tables.billing_library.get_by_id(item_id)
   if row:
     row.delete()
+
+@anvil.server.callable
+def get_active_billing_items_for_dropdown():
+  """Get all active billing items formatted for dropdown"""
+  return app_tables.billing_library.search(
+    active=True,
+    tables.order_by('name')
+  )

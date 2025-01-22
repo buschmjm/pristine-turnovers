@@ -17,6 +17,7 @@ class collectPayment(collectPaymentTemplate):
         self.bill_card.visible = False  # Ensure bill card starts hidden
         self.selected_row = None  # Track selected row for highlighting
         self.customer_table.visible = True
+        self.bill_items = []  # Initialize empty list for bill items
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -153,10 +154,8 @@ class collectPayment(collectPaymentTemplate):
         self.selected_customer = None
         self.show_existing_customer()  # Return to existing customer view
 
-    def proceed_payment_card_button_click(self, **event_args):
-      """This method is called when the button is clicked"""
-      pass
-
     def add_bill_item_button_click(self, **event_args):
-      """This method is called when the button is clicked"""
-      pass
+        """Add a new blank row to the bill items table"""
+        new_item = {'billing_item': None}
+        self.bill_items.append(new_item)
+        self.bill_items_list.items = self.bill_items
