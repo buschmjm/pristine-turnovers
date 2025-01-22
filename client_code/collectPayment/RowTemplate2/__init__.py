@@ -14,6 +14,7 @@ class RowTemplate2(RowTemplate2Template):
       self.setup_initial_state()
     else:
       self.update_display()
+    self.quantity_entry_box.text = "1"  # Set default quantity in constructor
 
   def setup_initial_state(self):
     """Set up initial component visibility for new rows"""
@@ -35,6 +36,9 @@ class RowTemplate2(RowTemplate2Template):
       (item['display'], item['value']) for item in billing_items
     ]
     self.quantity_entry_box.text = "1"
+    # Store quantity in item data
+    if isinstance(self.item, dict):
+      self.item['quantity'] = 1
 
   def calculate_total(self):
     """Calculate total cost including tax"""
@@ -113,8 +117,12 @@ class RowTemplate2(RowTemplate2Template):
     # Update the item dictionary
     if isinstance(self.item, dict):
       self.item['billing_item'] = selected_item
+      self.item['quantity'] = int(self.quantity_entry_box.text or 1)  # Store quantity
     else:
-      self.item = {'billing_item': selected_item}
+      self.item = {
+        'billing_item': selected_item,
+        'quantity': int(self.quantity_entry_box.text or 1)
+      }
     
     # Switch visibility
     self.edit_item_panel.visible = False
