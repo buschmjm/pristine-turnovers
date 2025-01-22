@@ -17,13 +17,20 @@ class RowTemplate2(RowTemplate2Template):
 
   def setup_initial_state(self):
     """Set up initial component visibility for new rows"""
-    # Show edit panel, hide display panel
+    # Show edit panel
     self.edit_item_panel.visible = True
-    self.display_item_panel.visible = False
+    
+    # Hide display components
+    self.billing_item_name_label.visible = False
+    self.cost_each_label.visible = False
+    self.quantity_entry_box.visible = False
+    self.tax_cost_label.visible = False
+    self.item_total_label.visible = False
+    self.edit_billing_item.visible = False
     
     # Load dropdown options
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
-    print(f"Loaded {len(items)} items for dropdown")
+    print(f"Loaded {len(billing_items)} items for dropdown")
     self.add_item_selector_dropdown.items = [
       (item['display'], item['value']) for item in billing_items
     ]
@@ -60,14 +67,19 @@ class RowTemplate2(RowTemplate2Template):
 
   def edit_billing_item_click(self, **event_args):
     """Re-open edit panel when edit button is clicked"""
+    # Show edit panel, hide display components
     self.edit_item_panel.visible = True
-    self.display_item_panel.visible = False
+    self.billing_item_name_label.visible = False
+    self.cost_each_label.visible = False
+    self.quantity_entry_box.visible = False
+    self.tax_cost_label.visible = False
+    self.item_total_label.visible = False
+    self.edit_billing_item.visible = False
     
-    # Load current values into edit fields
-    self.add_item_selector_dropdown.selected_value = (
-      f"{self.item['billing_item']['name']} - ${self.item['billing_item']['mattsCost']//100}.{self.item['billing_item']['mattsCost']%100:02d}",
-      self.item['billing_item']
-    )
+    # Load current values
+    current_item = self.item['billing_item']
+    display_text = f"{current_item['name']} - ${current_item['mattsCost']//100}.{current_item['mattsCost']%100:02d}"
+    self.add_item_selector_dropdown.selected_value = (display_text, current_item)
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
 
   def quantity_entry_box_pressed_enter(self, **event_args):
@@ -102,9 +114,14 @@ class RowTemplate2(RowTemplate2Template):
     else:
       self.item = {'billing_item': selected_item}
     
-    # Switch panel visibility
+    # Switch visibility
     self.edit_item_panel.visible = False
-    self.display_item_panel.visible = True
+    self.billing_item_name_label.visible = True
+    self.cost_each_label.visible = True
+    self.quantity_entry_box.visible = True
+    self.tax_cost_label.visible = True
+    self.item_total_label.visible = True
+    self.edit_billing_item.visible = True
     
     self.update_display()
 
