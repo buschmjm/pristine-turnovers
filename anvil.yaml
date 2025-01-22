@@ -117,6 +117,14 @@ db_schema:
       type: datetime
     server: full
     title: Customers
+  globalvariables:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: tax
+      type: number
+    server: full
+    title: globalVariables
   tokens:
     client: none
     columns:
