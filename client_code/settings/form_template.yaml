@@ -13,24 +13,24 @@ components:
         name: tax_percentage_label
         properties: {}
         type: Label
+      - event_bindings: {click: edit_tax_rate_click}
+        layout_properties: {grid_position: 'ETOOJE,KMKNRV QOWWFW,ERIWWR'}
+        name: edit_tax_rate
+        properties: {align: right, icon: 'fa:edit', text: ''}
+        type: Button
       - event_bindings: {pressed_enter: tax_percentage_text_box_pressed_enter}
         layout_properties: {grid_position: 'ETOOJE,KMKNRV IQEAAW,NMPAPX'}
         name: tax_percentage_text_box
         properties: {visible: false}
         type: TextBox
-      - event_bindings: {click: edit_tax_rate_click}
-        layout_properties: {grid_position: 'ETOOJE,KMKNRV BUQDRS,DXQYTH'}
-        name: edit_tax_rate
-        properties: {align: right, icon: 'fa:edit', text: ''}
-        type: Button
       - event_bindings: {click: save_tax_rate_click}
-        layout_properties: {grid_position: 'ETOOJE,KMKNRV FPVZPA,NIHQNY'}
+        layout_properties: {grid_position: 'ETOOJE,KMKNRV IQEAAW,CRDWHL'}
         name: save_tax_rate
         properties: {align: right, icon: 'fa:save', text: '', visible: false}
         type: Button
       layout_properties: {}
       name: admin_card
-      properties: {col_widths: '{"CLCDNU":30,"KMKNRV":30}', role: outlined-card}
+      properties: {col_widths: '{"CLCDNU":30,"KMKNRV":30,"KRHPUJ":45,"ERIWWR":15,"NMPAPX":45,"CRDWHL":15}', role: outlined-card}
       type: ColumnPanel
     layout_properties: {grid_position: 'LIDXWS,BXABPA'}
     name: linear_panel_1
