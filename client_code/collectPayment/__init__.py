@@ -124,15 +124,21 @@ class collectPayment(collectPaymentTemplate):
         """Called when the new customer button is clicked"""
         self.show_new_customer()
         
+    def clear_customer_highlights(self):
+        """Clear highlighting from all customer rows"""
+        for c in self.repeating_panel_1.get_components():
+            c.background = 'white'
+            
     def select_customer(self, customer, row_template=None):
         """Handle customer selection from template"""
         self.selected_customer = customer
         
-        # Update highlighting - remove previous and set new
-        if self.selected_row:
-            self.selected_row.background = 'white'
+        # Clear all previous highlighting first
+        self.clear_customer_highlights()
+        
+        # Set new highlight if row provided
         if row_template:
-            row_template.background = '#E3F2FD'  # Light blue highlight
+            row_template.background = '#E3F2FD'
             self.selected_row = row_template
         
         # Hide customer selection card and show billing
@@ -140,6 +146,10 @@ class collectPayment(collectPaymentTemplate):
         self.selected_customer_label.text = f"Bill for {customer['firstName']} {customer['lastName']}"
         self.bill_card.visible = True
         self.re_select_customer_button.visible = True
+        
+        # Clear any existing bill items when selecting new customer
+        self.bill_items = []
+        self.bill_items_list.items = self.bill_items
         
     def re_select_customer_button_click(self, **event_args):
         """Handle customer reselection"""
@@ -161,9 +171,13 @@ class collectPayment(collectPaymentTemplate):
     
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
+        # Create new item and add to list
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
-        self.refresh_bill_items()  # Refresh the grid to show the new item
+        
+        # Force refresh of repeating panel
+        self.bill_items_list.items = []  # Clear first
+        self.bill_items_list.items = self.bill_items  # Reassign to trigger refresh
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
