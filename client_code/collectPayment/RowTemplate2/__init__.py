@@ -64,22 +64,24 @@ class RowTemplate2(RowTemplate2Template):
     selected_item = self.item['billing_item']
     if not selected_item:
       return
-      
-    quantity = int(self.quantity_entry_box.text or 1)
-    subtotal = selected_item['mattsCost'] * quantity
     
+    # Display item details
     self.billing_item_name_label.text = selected_item['name']
     self.cost_each_label.text = f"${selected_item['mattsCost']//100}.{selected_item['mattsCost']%100:02d}"
     
-    # Calculate and display tax
+    # Display quantity
+    quantity = self.item.get('quantity', 1)
+    self.quantity_label.text = str(quantity)
+    
+    # Display tax and total (only updated after save)
+    subtotal = selected_item['mattsCost'] * quantity
     if selected_item['taxable']:
-      tax_rate = anvil.server.call('get_tax_rate')
-      tax = int(subtotal * tax_rate)
+      tax = int(subtotal * self.item.get('tax_amount', 0))
       self.tax_cost_label.text = f"${tax//100}.{tax%100:02d}"
     else:
       self.tax_cost_label.text = "$0.00"
       
-    total = self.calculate_total()
+    total = subtotal + int(self.item.get('tax_amount', 0))
     self.item_total_label.text = f"${total//100}.{total%100:02d}"
     
   def add_item_selector_dropdown_change(self, **event_args):
@@ -123,37 +125,41 @@ class RowTemplate2(RowTemplate2Template):
       self.update_display()
 
   def save_billing_item_click(self, **event_args):
-    """Save the selected item details"""
     if not self.add_item_selector_dropdown.selected_value:
       alert("Please select an item.")
       return
     
-    print(f"Selected item: {self.add_item_selector_dropdown.selected_value}")  # Debug print
-    
-    # The selected value now contains the full item data
     selected_item = self.add_item_selector_dropdown.selected_value
+    quantity = int(self.quantity_entry_box.text or 1)
     
-    # Update the item dictionary
-    if isinstance(self.item, dict):
-      self.item['billing_item'] = selected_item
-      self.item['quantity'] = int(self.quantity_entry_box.text or 1)
+    # Calculate tax at save time
+    subtotal = selected_item['mattsCost'] * quantity
+    if selected_item['taxable']:
+      tax_rate = anvil.server.call('get_tax_rate')
+      tax_amount = int(subtotal * tax_rate)
     else:
-      self.item = {
-        'billing_item': selected_item,
-        'quantity': int(self.quantity_entry_box.text or 1)
-      }
+      tax_amount = 0
+    
+    # Update the item dictionary with all values
+    self.item.update({
+      'billing_item': selected_item,
+      'quantity': quantity,
+      'tax_amount': tax_amount
+    })
+    
+    # Update display components
+    self.quantity_label.text = str(quantity)
     
     # Switch visibility
     self.edit_item_panel.visible = False
     self.billing_item_name_label.visible = True
     self.cost_each_label.visible = True
-    self.quantity_entry_box.visible = True
+    self.quantity_label.visible = True
     self.tax_cost_label.visible = True
     self.item_total_label.visible = True
     self.edit_billing_item.visible = True
     
     self.update_display()
-    # Show add and proceed buttons after save
     get_open_form().show_add_button()
 
   def delete_billing_item_click(self, **event_args):
