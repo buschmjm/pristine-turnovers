@@ -86,17 +86,20 @@ class RowTemplate2(RowTemplate2Template):
     self.edit_item_panel.visible = True
     self.billing_item_name_label.visible = False
     self.cost_each_label.visible = False
-    self.quantity_entry_box.visible = False
+    self.quantity_label.visible = False
     self.tax_cost_label.visible = False
     self.item_total_label.visible = False
     self.edit_billing_item.visible = False
     
     # Load current values
     current_item = self.item['billing_item']
-    display_text = f"{current_item['name']} - ${current_item['mattsCost']//100}.{current_item['mattsCost']%100:02d}"
-    self.add_item_selector_dropdown.selected_value = (display_text, current_item)
+    # Find matching item in dropdown list
+    for display_text, value in self.add_item_selector_dropdown.items:
+      if value['name'] == current_item['name'] and value['mattsCost'] == current_item['mattsCost']:
+        self.add_item_selector_dropdown.selected_value = (display_text, value)
+        break
+        
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
-    # Hide proceed button when editing
     get_open_form().proceed_payment_card_button.visible = False
 
   def quantity_entry_box_pressed_enter(self, **event_args):
