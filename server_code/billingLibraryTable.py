@@ -51,6 +51,6 @@ def delete_billing_item(item_id):
 def get_active_billing_items_for_dropdown():
   """Get all active billing items formatted for dropdown"""
   return app_tables.billing_library.search(
-    active=True,
-    tables.order_by('name')
+    tables.order_by('name'),  # Positional argument must come first
+    active=True              # Keyword arguments follow
   )
