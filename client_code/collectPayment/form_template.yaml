@@ -115,7 +115,6 @@ components:
         - {data_key: quantity, expand: false, id: KPDSET, title: Quantity, width: 98.9307861328125}
         - {data_key: tax, expand: false, id: HWGLUQ, title: Tax Cost, width: 100.564453125}
         - {data_key: totalCost, expand: false, id: MONBTS, title: Item Total Cost, width: 114.1287841796875}
-        - {data_key: column_1, expand: false, id: YYSMPL, title: '', width: 50.73291015625}
       type: DataGrid
     - layout_properties: {grid_position: 'QDVRUR,IIXTGG'}
       name: bill_total_label
