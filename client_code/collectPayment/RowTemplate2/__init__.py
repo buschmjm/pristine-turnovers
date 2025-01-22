@@ -30,11 +30,10 @@ class RowTemplate2(RowTemplate2Template):
     self.tax_cost_label.visible = False
     self.item_total_label.visible = False
     
-    # Load dropdown options
+    # Load dropdown options with proper key-value pairs
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
     self.add_item_selector_dropdown.items = [
-      (f"{item['name']} - (${item['mattsCost']//100}.{item['mattsCost']%100:02d})", item) 
-      for item in billing_items
+      (item['display'], item['value']) for item in billing_items
     ]
     
     # Set default quantity
@@ -94,14 +93,16 @@ class RowTemplate2(RowTemplate2Template):
       alert("Please select an item")
       return
       
-    selected_item = self.add_item_selector_dropdown.selected_value[1]
-    # Update the item dictionary properly
+    # Get the full item data from the selected value
+    selected_item = self.add_item_selector_dropdown.selected_value
+    
+    # Update the item dictionary
     if isinstance(self.item, dict):
       self.item['billing_item'] = selected_item
     else:
       self.item = {'billing_item': selected_item}
     
-    # Switch visibility
+    # Switch visibility and update display
     self.add_item_selector_dropdown.visible = False
     self.billing_item_name_label.visible = True
     self.edit_billing_item.visible = True
