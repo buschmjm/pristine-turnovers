@@ -184,3 +184,7 @@ class collectPayment(collectPaymentTemplate):
         if item in self.bill_items:
             self.bill_items.remove(item)
             self.refresh_bill_items()
+
+    def proceed_payment_card_button_click(self, **event_args):
+      """This method is called when the button is clicked"""
+      pass
