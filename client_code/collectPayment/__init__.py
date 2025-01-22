@@ -183,23 +183,35 @@ class collectPayment(collectPaymentTemplate):
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items list"""
         print("Adding new bill item...")
+        
+        # Save current quantities before refresh
+        current_quantities = {
+            item['billing_item']['name']: item.get('quantity', 1) 
+            for item in self.bill_items if 'billing_item' in item
+        }
+        
+        # Add new item
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
         
-        # Hide both add and proceed buttons while editing
+        # Hide buttons
         self.add_bill_item_button.visible = False
         self.proceed_payment_card_button.visible = False
         
-        # Update the repeating panel directly
-        self.repeating_panel_2.items = None  # Clear first
-        self.repeating_panel_2.items = self.bill_items  # Reassign to force refresh
+        # Update panel and restore quantities
+        self.repeating_panel_2.items = None
+        self.repeating_panel_2.items = self.bill_items
         
-        # Find the new row and ensure dropdown is visible
+        # Restore quantities and setup new row
         for component in self.repeating_panel_2.get_components():
             if component.item == new_item:
-                print("Found new row, setting up initial state")
                 component.setup_initial_state()
-                break
+            elif 'billing_item' in component.item:
+                item_name = component.item['billing_item']['name']
+                if item_name in current_quantities:
+                    component.quantity_entry_box.text = str(current_quantities[item_name])
+                    component.item['quantity'] = current_quantities[item_name]
+                    component.update_display()
         
         print("Bill items refreshed")
 

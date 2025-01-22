@@ -45,8 +45,16 @@ class RowTemplate2(RowTemplate2Template):
     quantity = int(self.quantity_entry_box.text or 1)
     selected_item = self.item['billing_item']
     cost_each = selected_item['mattsCost']
-    tax = selected_item['taxable'] * 0  # Placeholder for tax calculation
-    return (cost_each * quantity) + tax
+    subtotal = cost_each * quantity
+    
+    # Get tax rate and calculate tax if item is taxable
+    if selected_item['taxable']:
+      tax_rate = anvil.server.call('get_tax_rate')
+      tax = int(subtotal * tax_rate)  # Convert to pennies
+    else:
+      tax = 0
+      
+    return subtotal + tax
     
   def update_display(self):
     """Update all display fields"""
@@ -58,10 +66,19 @@ class RowTemplate2(RowTemplate2Template):
       return
       
     quantity = int(self.quantity_entry_box.text or 1)
+    subtotal = selected_item['mattsCost'] * quantity
     
     self.billing_item_name_label.text = selected_item['name']
     self.cost_each_label.text = f"${selected_item['mattsCost']//100}.{selected_item['mattsCost']%100:02d}"
-    self.tax_cost_label.text = f"${0:.2f}" if not selected_item['taxable'] else f"${0:.2f}"
+    
+    # Calculate and display tax
+    if selected_item['taxable']:
+      tax_rate = anvil.server.call('get_tax_rate')
+      tax = int(subtotal * tax_rate)
+      self.tax_cost_label.text = f"${tax//100}.{tax%100:02d}"
+    else:
+      self.tax_cost_label.text = "$0.00"
+      
     total = self.calculate_total()
     self.item_total_label.text = f"${total//100}.{total%100:02d}"
     
@@ -98,9 +115,11 @@ class RowTemplate2(RowTemplate2Template):
       quantity = int(self.quantity_entry_box.text or 1)
       if quantity < 1:
         self.quantity_entry_box.text = "1"
-      self.update_display()
+      self.item['quantity'] = quantity  # Store quantity in item data
+      self.update_display()  # Refresh tax and total
     except ValueError:
       self.quantity_entry_box.text = "1"
+      self.item['quantity'] = 1
       self.update_display()
 
   def save_billing_item_click(self, **event_args):
@@ -117,7 +136,7 @@ class RowTemplate2(RowTemplate2Template):
     # Update the item dictionary
     if isinstance(self.item, dict):
       self.item['billing_item'] = selected_item
-      self.item['quantity'] = int(self.quantity_entry_box.text or 1)  # Store quantity
+      self.item['quantity'] = int(self.quantity_entry_box.text or 1)
     else:
       self.item = {
         'billing_item': selected_item,
