@@ -1,9 +1,4 @@
 components:
-- event_bindings: {change: add_item_selector_dropdown_change}
-  layout_properties: {}
-  name: add_item_selector_dropdown
-  properties: {align: full, visible: false}
-  type: DropDown
 - layout_properties: {column: CWNKKA}
   name: billing_item_name_label
   properties: {}
@@ -34,25 +29,35 @@ components:
       padding: [null, '0', null, '0']
     text: ''
   type: Button
-- event_bindings: {click: save_billing_item_click}
-  layout_properties: {column: XOUPKO}
-  name: save_billing_item
-  properties:
-    icon: fa:save
-    spacing:
-      padding: [null, '0', null, '0']
-    text: ''
-    visible: false
-  type: Button
-- event_bindings: {click: delete_billing_item_click}
-  layout_properties: {column: YYSMPL}
-  name: delete_billing_item
-  properties:
-    icon: fa:remove
-    spacing:
-      padding: [null, '0', null, '0']
-    text: ''
-    visible: false
-  type: Button
+- components:
+  - event_bindings: {click: save_billing_item_click}
+    layout_properties: {col_xs: 0, row: WPLYWW, width_xs: 1}
+    name: save_billing_item
+    properties:
+      icon: fa:save
+      spacing:
+        padding: [null, '0', null, '0']
+      text: ''
+      visible: false
+    type: Button
+  - event_bindings: {change: add_item_selector_dropdown_change}
+    layout_properties: {col_xs: 1, row: WPLYWW, width_xs: 6}
+    name: add_item_selector_dropdown
+    properties: {align: full, visible: false}
+    type: DropDown
+  - event_bindings: {click: delete_billing_item_click}
+    layout_properties: {col_xs: 11, row: WPLYWW, width_xs: 1}
+    name: delete_billing_item
+    properties:
+      icon: fa:remove
+      spacing:
+        padding: [null, '0', null, '0']
+      text: ''
+      visible: false
+    type: Button
+  layout_properties: {}
+  name: edit_item_panel
+  properties: {}
+  type: GridPanel
 container: {type: DataRowPanel}
 is_package: true
