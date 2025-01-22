@@ -21,6 +21,7 @@ class collectPayment(collectPaymentTemplate):
         print("Initializing bill_items_list...")  # Debug print
         if hasattr(self, 'bill_items_list'):
             self.bill_items_list.items = self.bill_items
+            self.bill_items_list.role = 'multiple'  # Ensure proper list mode
             print("bill_items_list initialized")  # Debug print
         else:
             print("Error: bill_items_list component not found!")  # Debug print
@@ -172,7 +173,9 @@ class collectPayment(collectPaymentTemplate):
 
     def refresh_bill_items(self):
         """Refresh the bill items grid"""
-        self.bill_items_list.items = self.bill_items
+        updated_items = list(self.bill_items)
+        self.bill_items_list.items = updated_items
+        self.bill_items_list.refresh()
     
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
@@ -181,13 +184,11 @@ class collectPayment(collectPaymentTemplate):
         self.bill_items.append(new_item)
         print(f"Current bill items count: {len(self.bill_items)}")  # Debug print
         
-        try:
-            self.bill_items_list.items = []  # Clear first
-            self.bill_items_list.items = self.bill_items  # Reassign to trigger refresh
-            print("Successfully updated bill_items_list")  # Debug print
-        except Exception as e:
-            print(f"Error updating bill_items_list: {str(e)}")  # Debug print
-            raise  # Re-raise the exception to see it in the console
+        # Create new list instance to force refresh
+        updated_items = list(self.bill_items)
+        self.bill_items_list.items = updated_items
+        self.bill_items_list.refresh()  # Force repeating panel refresh
+        print("Refreshed bill_items_list")
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
