@@ -18,5 +18,6 @@ class ItemTemplate1(ItemTemplate1Template):
       self.email_label.text = customer['email']
 
   def select_customer_button_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    pass
+    """Handle customer selection"""
+    customer = self.item  # Get the customer data from this template's item
+    get_open_form().select_customer(customer)  # Call parent form's selection handler

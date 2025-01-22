@@ -13,6 +13,8 @@ class collectPayment(collectPaymentTemplate):
         # Simple direct load without delayed loading
         self.load_customers()
         print("Form initialization complete")  # Debug print
+        self.selected_customer = None
+        self.bill_card.visible = False  # Ensure bill card starts hidden
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -97,7 +99,28 @@ class collectPayment(collectPaymentTemplate):
     def new_customer_button_click(self, **event_args):
         """Called when the new customer button is clicked"""
         self.show_new_customer()
-
+        
+    def select_customer(self, customer):
+        """Handle customer selection from template"""
+        self.selected_customer = customer
+        # Update UI for selected customer
+        self.customer_table.visible = False
+        self.existing_customer_button.visible = False
+        self.new_customer_button.visible = False
+        
+        # Show selected customer info
+        self.selected_customer_label.text = f"Bill for {customer['firstName']} {customer['lastName']}"
+        self.bill_card.visible = True
+        self.re_select_customer_button.visible = True
+        
     def re_select_customer_button_click(self, **event_args):
-      """This method is called when the button is clicked"""
-      pass
+        """Handle customer reselection"""
+        # Reset UI state
+        self.customer_table.visible = True
+        self.existing_customer_button.visible = True
+        self.new_customer_button.visible = True
+        self.bill_card.visible = False
+        self.re_select_customer_button.visible = False
+        self.selected_customer_label.text = ""
+        self.selected_customer = None
+        self.show_existing_customer()  # Return to existing customer view
