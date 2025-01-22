@@ -20,4 +20,4 @@ class ItemTemplate1(ItemTemplate1Template):
   def select_customer_button_click(self, **event_args):
     """Handle customer selection"""
     customer = self.item  # Get the customer data from this template's item
-    get_open_form().select_customer(customer)  # Call parent form's selection handler
+    get_open_form().select_customer(customer, self)  # Call parent form's selection handler
