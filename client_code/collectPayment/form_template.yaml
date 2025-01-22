@@ -110,7 +110,7 @@ components:
       properties:
         columns:
         - {data_key: column_1, expand: false, id: XOUPKO, title: '', width: 49.366424560546875}
-        - {data_key: itemName, expand: false, id: CWNKKA, title: Name, width: 150.57427978515625}
+        - {data_key: itemName, expand: false, id: CWNKKA, title: Name, width: 201.4951171875}
         - {data_key: costPer, expand: false, id: SFHDFY, title: Cost Each, width: 99.64361572265625}
         - {data_key: quantity, expand: false, id: KPDSET, title: Quantity, width: 98.9307861328125}
         - {data_key: tax, expand: false, id: HWGLUQ, title: Tax Cost, width: 100.564453125}

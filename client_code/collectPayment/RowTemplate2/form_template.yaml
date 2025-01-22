@@ -38,12 +38,12 @@ components:
       spacing:
         padding: [null, '0', null, '0']
       text: ''
-      visible: false
+      visible: true
     type: Button
   - event_bindings: {change: add_item_selector_dropdown_change}
     layout_properties: {col_xs: 1, row: WPLYWW, width_xs: 6}
     name: add_item_selector_dropdown
-    properties: {align: full, visible: false}
+    properties: {align: full, visible: true}
     type: DropDown
   - event_bindings: {click: delete_billing_item_click}
     layout_properties: {col_xs: 11, row: WPLYWW, width_xs: 1}
@@ -53,11 +53,11 @@ components:
       spacing:
         padding: [null, '0', null, '0']
       text: ''
-      visible: false
+      visible: true
     type: Button
   layout_properties: {}
   name: edit_item_panel
-  properties: {}
+  properties: {visible: false}
   type: GridPanel
 container: {type: DataRowPanel}
 is_package: true
