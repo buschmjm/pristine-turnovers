@@ -81,6 +81,8 @@ class RowTemplate2(RowTemplate2Template):
     display_text = f"{current_item['name']} - ${current_item['mattsCost']//100}.{current_item['mattsCost']%100:02d}"
     self.add_item_selector_dropdown.selected_value = (display_text, current_item)
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
+    # Hide proceed button when editing
+    get_open_form().proceed_payment_card_button.visible = False
 
   def quantity_entry_box_pressed_enter(self, **event_args):
     """This method is called when the user presses Enter in this text box"""
@@ -124,11 +126,11 @@ class RowTemplate2(RowTemplate2Template):
     self.edit_billing_item.visible = True
     
     self.update_display()
-    # Show add button after save
+    # Show add and proceed buttons after save
     get_open_form().show_add_button()
 
   def delete_billing_item_click(self, **event_args):
     """Remove this row"""
     get_open_form().remove_bill_item(self.item)
-    # Show add button after delete
+    # Show add and proceed buttons after delete
     get_open_form().show_add_button()
