@@ -11,7 +11,6 @@ class billingLibrary(billingLibraryTemplate):
     self.init_components(**properties)
     self.show_active = True
     self.refresh_grid()
-    self.current_new_item = None  # Add tracking for new items
     
   def is_active_view(self):
     """Helper method to determine if we're in active view"""
@@ -35,14 +34,12 @@ class billingLibrary(billingLibraryTemplate):
 
   def add_item_button_click(self, **event_args):
     new_row = anvil.server.call('create_billing_item')
-    self.current_new_item = new_row  # Track the new item
     self.refresh_grid()
     
     # Then find and edit the new row
     for c in self.items_repeating_panel.get_components():
       if c.item == new_row:
         c.enable_edit_mode()
-        c.is_new_item = True  # Flag this as a new item
         break
 
   def view_inactive_button_click(self, **event_args):
