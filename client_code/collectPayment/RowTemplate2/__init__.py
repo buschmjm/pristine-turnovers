@@ -124,7 +124,11 @@ class RowTemplate2(RowTemplate2Template):
     self.edit_billing_item.visible = True
     
     self.update_display()
+    # Show add button after save
+    get_open_form().show_add_button()
 
   def delete_billing_item_click(self, **event_args):
     """Remove this row"""
     get_open_form().remove_bill_item(self.item)
+    # Show add button after delete
+    get_open_form().show_add_button()

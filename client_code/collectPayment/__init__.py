@@ -185,7 +185,9 @@ class collectPayment(collectPaymentTemplate):
         print("Adding new bill item...")
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
-        print(f"Current bill items count: {len(self.bill_items)}")
+        
+        # Hide add button while editing
+        self.add_bill_item_button.visible = False
         
         # Update the repeating panel directly
         self.repeating_panel_2.items = None  # Clear first
@@ -199,6 +201,10 @@ class collectPayment(collectPaymentTemplate):
                 break
         
         print("Bill items refreshed")
+
+    def show_add_button(self):
+        """Helper to show add button after save/delete"""
+        self.add_bill_item_button.visible = True
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
