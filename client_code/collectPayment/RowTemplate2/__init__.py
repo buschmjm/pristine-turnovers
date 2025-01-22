@@ -102,4 +102,4 @@ class RowTemplate2(RowTemplate2Template):
 
   def delete_billing_item_click(self, **event_args):
     """Remove this row"""
-    self.remove_from_parent()
+    get_open_form().remove_bill_item(self.item)

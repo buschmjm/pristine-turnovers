@@ -18,6 +18,7 @@ class collectPayment(collectPaymentTemplate):
         self.selected_row = None  # Track selected row for highlighting
         self.customer_table.visible = True
         self.bill_items = []  # Initialize empty list for bill items
+        self.bill_items_list.items = self.bill_items  # Initialize the grid with empty list
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -154,8 +155,18 @@ class collectPayment(collectPaymentTemplate):
         self.selected_customer = None
         self.show_existing_customer()  # Return to existing customer view
 
+    def refresh_bill_items(self):
+        """Refresh the bill items grid"""
+        self.bill_items_list.items = self.bill_items
+    
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
-        self.bill_items_list.items = self.bill_items
+        self.refresh_bill_items()  # Refresh the grid to show the new item
+
+    def remove_bill_item(self, item):
+        """Remove an item from the bill items list"""
+        if item in self.bill_items:
+            self.bill_items.remove(item)
+            self.refresh_bill_items()
