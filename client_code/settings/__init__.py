@@ -28,8 +28,8 @@ class settings(settingsTemplate):
   def save_tax_rate_handler(self):
     """Handle saving the tax rate"""
     try:
-      # Convert percentage input to decimal (e.g., 10.375% -> 0.10375)
-      new_rate = float(self.tax_percentage_text_box.text.strip().replace('%', '')) / 100
+      # Convert percentage input to decimal and round to 5 decimal places
+      new_rate = round(float(self.tax_percentage_text_box.text.strip().replace('%', '')) / 100, 5)
       
       if new_rate < 0:
         alert("Tax rate cannot be negative.")

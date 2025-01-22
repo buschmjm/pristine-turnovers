@@ -15,6 +15,6 @@ def get_tax_rate():
 def update_tax_rate(new_rate):
   global TAX_RATE
   print(f"Updating tax rate from {TAX_RATE} to {new_rate}")  # Debug print
-  TAX_RATE = float(new_rate)
+  TAX_RATE = round(float(new_rate), 5)  # Round to 5 decimal places
   print(f"New tax rate set to: {TAX_RATE}")  # Debug print
   return TAX_RATE
