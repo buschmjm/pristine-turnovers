@@ -16,6 +16,8 @@ class collectPayment(collectPaymentTemplate):
         self.selected_customer = None
         self.bill_card.visible = False  # Ensure bill card starts hidden
         self.selected_row = None  # Track selected row for highlighting
+        self.customer_table.visible = True
+        self.customer_table_loading.visible = False  # Add loading indicator (make sure to add this component in Designer)
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -27,6 +29,22 @@ class collectPayment(collectPaymentTemplate):
         except Exception as e:
             print(f"Error loading customers: {str(e)}")  # Debug print
             alert("Failed to load customers. Please try refreshing the page.")
+            
+    def refresh_customer_list(self):
+        """Refresh just the customer list component"""
+        # Show loading indicator
+        self.customer_table_loading.visible = True
+        self.repeating_panel_1.items = []  # Clear current items
+        
+        # Use background task to load customers
+        anvil.server.call_s('customerQueries',
+          callback=self.customer_load_complete
+        )
+        
+    def customer_load_complete(self, customers):
+        """Callback when customer load completes"""
+        self.repeating_panel_1.items = customers if customers else []
+        self.customer_table_loading.visible = False
             
     def create_invoice_button_click(self, **event_args):
         """
@@ -73,6 +91,10 @@ class collectPayment(collectPaymentTemplate):
                 self.first_name_input.text = ""
                 self.last_name_input.text = ""
                 self.email_input.text = ""
+                
+                # Refresh the customer list in the background
+                self.refresh_customer_list()
+                
         except Exception as e:
             error_message = str(e)
             if "already exists in QuickBooks Online" in error_message:
