@@ -28,6 +28,7 @@ class collectPayment(collectPaymentTemplate):
         self.bill_items = []
         # Initialize the repeating panel, not the data grid
         self.repeating_panel_2.items = self.bill_items
+        print("Bill items panel initialized")
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -180,24 +181,30 @@ class collectPayment(collectPaymentTemplate):
         self.repeating_panel_2.items = temp_items
     
     def add_bill_item_button_click(self, **event_args):
-        """Add a new blank row to the bill items table"""
-        print("Adding new bill item...")  # Debug print
+        """Add a new blank row to the bill items list"""
+        print("Adding new bill item...")
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
-        print(f"Current bill items count: {len(self.bill_items)}")  # Debug print
-        self.refresh_bill_items()
-        print("Refreshed bill_items_list")
-        # Make sure dropdown is visible in the new row
-        for c in self.repeating_panel_2.get_components():
-            if c.item == new_item:
-                c.add_item_selector_dropdown.visible = True
+        print(f"Current bill items count: {len(self.bill_items)}")
+        
+        # Update the repeating panel directly
+        self.repeating_panel_2.items = None  # Clear first
+        self.repeating_panel_2.items = self.bill_items  # Reassign to force refresh
+        
+        # Find the new row and ensure dropdown is visible
+        for component in self.repeating_panel_2.get_components():
+            if component.item == new_item:
+                print("Found new row, setting up initial state")
+                component.setup_initial_state()
                 break
+        
+        print("Bill items refreshed")
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
         if item in self.bill_items:
             self.bill_items.remove(item)
-            self.refresh_bill_items()
+            self.repeating_panel_2.items = self.bill_items
 
     def proceed_payment_card_button_click(self, **event_args):
       """This method is called when the button is clicked"""
