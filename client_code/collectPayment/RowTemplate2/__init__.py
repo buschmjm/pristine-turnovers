@@ -94,17 +94,21 @@ class RowTemplate2(RowTemplate2Template):
     # Load current values
     current_item = self.item['billing_item']
     
-    # Recreate the selected value in the same format as when initially loaded
-    selected_value = {
-      'name': current_item['name'],
-      'mattsCost': current_item['mattsCost'],
-      'cleanerCost': current_item['cleanerCost'],
-      'taxable': current_item['taxable'],
-      'active': current_item['active']
-    }
+    # Rebuild the dropdown option in same format as initial loading
     display_text = f"{current_item['name']} - ${current_item['mattsCost']//100}.{current_item['mattsCost']%100:02d}"
     
-    self.add_item_selector_dropdown.selected_value = (display_text, selected_value)
+    # Reload dropdown options to ensure we have fresh data
+    billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
+    self.add_item_selector_dropdown.items = [
+      (item['display'], item['value']) for item in billing_items
+    ]
+    
+    # Find and select the matching item
+    for item in self.add_item_selector_dropdown.items:
+      if item[1]['name'] == current_item['name']:
+        self.add_item_selector_dropdown.selected_value = item
+        break
+        
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
     get_open_form().proceed_payment_card_button.visible = False
 
@@ -130,7 +134,8 @@ class RowTemplate2(RowTemplate2Template):
       alert("Please select an item.")
       return
     
-    selected_item = self.add_item_selector_dropdown.selected_value
+    # Get the selected value (it's a tuple of (display_text, item_data))
+    display_text, selected_item = self.add_item_selector_dropdown.selected_value
     quantity = int(self.quantity_entry_box.text or 1)
     
     # Calculate tax
