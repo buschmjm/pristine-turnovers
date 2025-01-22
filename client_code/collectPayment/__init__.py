@@ -25,6 +25,9 @@ class collectPayment(collectPaymentTemplate):
             print("bill_items_list initialized")  # Debug print
         else:
             print("Error: bill_items_list component not found!")  # Debug print
+        self.bill_items = []
+        # Initialize the repeating panel, not the data grid
+        self.repeating_panel_2.items = self.bill_items
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -172,10 +175,9 @@ class collectPayment(collectPaymentTemplate):
         self.show_existing_customer()  # Return to existing customer view
 
     def refresh_bill_items(self):
-        """Refresh the bill items grid"""
-        temp_items = list(self.bill_items)  # Create a new list instance
-        self.bill_items_list.items = None   # Clear the list
-        self.bill_items_list.items = temp_items  # Set new list
+        """Refresh the bill items panel"""
+        temp_items = list(self.bill_items)
+        self.repeating_panel_2.items = temp_items
     
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
@@ -185,6 +187,11 @@ class collectPayment(collectPaymentTemplate):
         print(f"Current bill items count: {len(self.bill_items)}")  # Debug print
         self.refresh_bill_items()
         print("Refreshed bill_items_list")
+        # Make sure dropdown is visible in the new row
+        for c in self.repeating_panel_2.get_components():
+            if c.item == new_item:
+                c.add_item_selector_dropdown.visible = True
+                break
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""

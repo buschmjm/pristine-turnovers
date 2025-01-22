@@ -9,23 +9,27 @@ from anvil.tables import app_tables
 
 class RowTemplate2(RowTemplate2Template):
   def __init__(self, **properties):
-    # Set Form properties and Data Bindings.
     self.init_components(**properties)
-    self.setup_initial_state()
-
-    # Any code you write here will run before the form opens.
+    # Only setup initial state if this is a new row
+    if not self.item.get('billing_item'):
+      self.setup_initial_state()
+    else:
+      self.update_display()
 
   def setup_initial_state(self):
-    """Set up initial component visibility"""
+    """Set up initial component visibility for new rows"""
+    # Show only dropdown and necessary buttons for new rows
+    self.add_item_selector_dropdown.visible = True
+    self.save_billing_item.visible = True
+    self.delete_billing_item.visible = True
+    
+    # Hide all other components initially
     self.billing_item_name_label.visible = False
     self.edit_billing_item.visible = False
     self.cost_each_label.visible = False
     self.quantity_entry_box.visible = False
     self.tax_cost_label.visible = False
     self.item_total_label.visible = False
-    self.save_billing_item.visible = True
-    self.delete_billing_item.visible = True
-    self.add_item_selector_dropdown.visible = True
     
     # Load dropdown options
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
