@@ -20,7 +20,7 @@ components:
     type: Label
   layout_properties: {grid_position: 'ALMWMH,ZZVFUG'}
   name: outlined_card_1
-  properties: {role: outlined-card}
+  properties: {col_widths: '{"CWOQEV":5,"PWVKSD":35,"EDVYDZ":20}', role: outlined-card}
   type: ColumnPanel
 container:
   properties: {col_widths: '{}'}
