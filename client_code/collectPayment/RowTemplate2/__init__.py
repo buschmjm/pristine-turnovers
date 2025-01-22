@@ -93,12 +93,18 @@ class RowTemplate2(RowTemplate2Template):
     
     # Load current values
     current_item = self.item['billing_item']
-    # Find matching item in dropdown list
-    for display_text, value in self.add_item_selector_dropdown.items:
-      if value['name'] == current_item['name'] and value['mattsCost'] == current_item['mattsCost']:
-        self.add_item_selector_dropdown.selected_value = (display_text, value)
-        break
-        
+    
+    # Recreate the selected value in the same format as when initially loaded
+    selected_value = {
+      'name': current_item['name'],
+      'mattsCost': current_item['mattsCost'],
+      'cleanerCost': current_item['cleanerCost'],
+      'taxable': current_item['taxable'],
+      'active': current_item['active']
+    }
+    display_text = f"{current_item['name']} - ${current_item['mattsCost']//100}.{current_item['mattsCost']%100:02d}"
+    
+    self.add_item_selector_dropdown.selected_value = (display_text, selected_value)
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
     get_open_form().proceed_payment_card_button.visible = False
 
