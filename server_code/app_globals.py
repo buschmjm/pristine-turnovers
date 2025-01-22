@@ -14,5 +14,7 @@ def get_tax_rate():
 @anvil.server.callable
 def update_tax_rate(new_rate):
   global TAX_RATE
+  print(f"Updating tax rate from {TAX_RATE} to {new_rate}")  # Debug print
   TAX_RATE = float(new_rate)
+  print(f"New tax rate set to: {TAX_RATE}")  # Debug print
   return TAX_RATE

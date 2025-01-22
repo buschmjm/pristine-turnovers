@@ -28,13 +28,16 @@ class settings(settingsTemplate):
   def save_tax_rate_handler(self):
     """Handle saving the tax rate"""
     try:
-      new_rate = float(self.tax_percentage_text_box.text) / 100
+      # Convert percentage input to decimal (e.g., 10.375% -> 0.10375)
+      new_rate = float(self.tax_percentage_text_box.text.strip().replace('%', '')) / 100
+      
       if new_rate < 0:
         alert("Tax rate cannot be negative.")
         return
       
-      # Update the global tax rate
-      anvil.server.call('update_tax_rate', new_rate)
+      # Update the global tax rate and confirm the change
+      updated_rate = anvil.server.call('update_tax_rate', new_rate)
+      print(f"Tax rate updated to: {updated_rate}")  # Debug print
       
       # Update display and visibility
       self.load_tax_rate()
@@ -45,6 +48,7 @@ class settings(settingsTemplate):
       
     except ValueError:
       alert("Please enter a valid number.")
+      return
 
   def edit_tax_rate_click(self, **event_args):
     """Show edit controls"""
