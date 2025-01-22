@@ -27,7 +27,7 @@ components:
         padding: ['15', '45', '15', '45']
       text: Billing Library
     type: Button
-  - event_bindings: {click: collect_payment_button_click}
+  - event_bindings: {click: settings_button_click}
     layout_properties: {}
     name: settings_button
     properties:

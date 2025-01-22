@@ -21,3 +21,7 @@ class nav_panel(nav_panelTemplate):
   def billing_library_button_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.open_form('billingLibrary')
+
+  def settings_button_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    anvil.open_form('settings')
