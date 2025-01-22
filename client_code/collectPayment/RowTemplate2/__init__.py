@@ -17,24 +17,32 @@ class RowTemplate2(RowTemplate2Template):
 
   def setup_initial_state(self):
     """Set up initial component visibility for new rows"""
-    # Show only dropdown and necessary buttons for new rows
+    # Load dropdown options first to ensure we have data
+    items = anvil.server.call('get_active_billing_items_for_dropdown')
+    print(f"Loaded {len(items)} items for dropdown")  # Debug print
+    
+    # Show only necessary components for new row
     self.add_item_selector_dropdown.visible = True
     self.save_billing_item.visible = True
     self.delete_billing_item.visible = True
     
-    # Hide all other components initially
+    # Hide all other components
     self.billing_item_name_label.visible = False
-    self.edit_billing_item.visible = False
+    self.edit_billing_item.visible = False  # Always hide edit button for new items
     self.cost_each_label.visible = False
     self.quantity_entry_box.visible = False
     self.tax_cost_label.visible = False
     self.item_total_label.visible = False
     
-    # Load dropdown options with proper key-value pairs
-    billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
-    self.add_item_selector_dropdown.items = [
-      (item['display'], item['value']) for item in billing_items
-    ]
+    # Set dropdown items directly from server response
+    dropdown_items = []
+    for item in items:
+      display_text = item['display']
+      value = item['value']
+      print(f"Adding item to dropdown: {display_text}")  # Debug print
+      dropdown_items.append((display_text, value))
+    
+    self.add_item_selector_dropdown.items = dropdown_items
     
     # Set default quantity
     self.quantity_entry_box.text = "1"
@@ -90,9 +98,11 @@ class RowTemplate2(RowTemplate2Template):
   def save_billing_item_click(self, **event_args):
     """Save the selected item details"""
     if not self.add_item_selector_dropdown.selected_value:
-      alert("Please select an item")
+      alert("Please select an item.")
       return
-      
+    
+    print(f"Selected item: {self.add_item_selector_dropdown.selected_value}")  # Debug print
+    
     # The selected value now contains the full item data
     selected_item = self.add_item_selector_dropdown.selected_value
     

@@ -54,10 +54,15 @@ def get_active_billing_items_for_dropdown():
     tables.order_by('name'),
     active=True
   )
-  # Return the full item data for each row
-  return [
-    {
+  print(f"Found {len(items)} active items")  # Debug print
+  
+  dropdown_items = []
+  for item in items:
+    formatted_item = {
       'display': f"{item['name']} - ${item['mattsCost']//100}.{item['mattsCost']%100:02d}",
-      'value': dict(item)  # Return full item data instead of just ID
-    } for item in items
-  ]
+      'value': dict(item)
+    }
+    print(f"Formatted item: {formatted_item['display']}")  # Debug print
+    dropdown_items.append(formatted_item)
+    
+  return dropdown_items
