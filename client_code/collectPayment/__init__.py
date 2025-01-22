@@ -103,12 +103,8 @@ class collectPayment(collectPaymentTemplate):
     def select_customer(self, customer):
         """Handle customer selection from template"""
         self.selected_customer = customer
-        # Update UI for selected customer
-        self.customer_table.visible = False
-        self.existing_customer_button.visible = False
-        self.new_customer_button.visible = False
-        
-        # Show selected customer info
+        # Hide customer selection card and show billing
+        self.customer_card.visible = False
         self.selected_customer_label.text = f"Bill for {customer['firstName']} {customer['lastName']}"
         self.bill_card.visible = True
         self.re_select_customer_button.visible = True
@@ -116,9 +112,7 @@ class collectPayment(collectPaymentTemplate):
     def re_select_customer_button_click(self, **event_args):
         """Handle customer reselection"""
         # Reset UI state
-        self.customer_table.visible = True
-        self.existing_customer_button.visible = True
-        self.new_customer_button.visible = True
+        self.customer_card.visible = True
         self.bill_card.visible = False
         self.re_select_customer_button.visible = False
         self.selected_customer_label.text = ""
