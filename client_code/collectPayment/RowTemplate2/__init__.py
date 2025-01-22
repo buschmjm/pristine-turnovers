@@ -10,8 +10,7 @@ from anvil.tables import app_tables
 class RowTemplate2(RowTemplate2Template):
   def __init__(self, **properties):
     self.init_components(**properties)
-    # Only setup initial state if this is a new row
-    if not self.item.get('billing_item'):
+    if not self.item or 'billing_item' not in self.item:
       self.setup_initial_state()
     else:
       self.update_display()
@@ -51,7 +50,13 @@ class RowTemplate2(RowTemplate2Template):
     
   def update_display(self):
     """Update all display fields"""
+    if not self.item or 'billing_item' not in self.item:
+      return
+      
     selected_item = self.item['billing_item']
+    if not selected_item:
+      return
+      
     quantity = int(self.quantity_entry_box.text or 1)
     
     self.billing_item_name_label.text = selected_item['name']
@@ -90,7 +95,11 @@ class RowTemplate2(RowTemplate2Template):
       return
       
     selected_item = self.add_item_selector_dropdown.selected_value[1]
-    self.item.update(billing_item=selected_item)
+    # Update the item dictionary properly
+    if isinstance(self.item, dict):
+      self.item['billing_item'] = selected_item
+    else:
+      self.item = {'billing_item': selected_item}
     
     # Switch visibility
     self.add_item_selector_dropdown.visible = False
