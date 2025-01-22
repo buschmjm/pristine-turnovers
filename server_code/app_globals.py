@@ -8,7 +8,7 @@ import anvil.server
 @anvil.server.callable
 def get_global_value(key):
   """Get a value from the globalvariables table"""
-  row = app_tables.globalvariables.get(variable=key)  # Changed from 'name' to 'variable'
+  row = app_tables.globalvariables.get(tax=key)  # Changed to use 'tax' column directly
   if row:
     return row['value']
   return None
@@ -25,12 +25,17 @@ def set_global_value(key, value):
 @anvil.server.callable
 def get_tax_rate():
   """Get tax rate from globalvariables"""
-  tax_rate = get_global_value('tax')  # This should match exactly what's in the table
-  return float(tax_rate) if tax_rate is not None else 0.0
+  row = app_tables.globalvariables.get()  # Get the single row
+  if row:
+    return float(row['tax'])  # Get tax value directly
+  return 0.0
 
 @anvil.server.callable
 def update_tax_rate(new_rate):
   """Update tax rate in globalvariables"""
   rounded_rate = round(float(new_rate), 5)
   print(f"Updating tax rate to {rounded_rate}")
-  return set_global_value('tax', rounded_rate)
+  row = app_tables.globalvariables.get()  # Get the single row
+  if row:
+    row['tax'] = rounded_rate  # Update tax directly
+  return rounded_rate
