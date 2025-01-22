@@ -18,7 +18,12 @@ class collectPayment(collectPaymentTemplate):
         self.selected_row = None  # Track selected row for highlighting
         self.customer_table.visible = True
         self.bill_items = []  # Initialize empty list for bill items
-        self.bill_items_list.items = self.bill_items  # Initialize the grid with empty list
+        print("Initializing bill_items_list...")  # Debug print
+        if hasattr(self, 'bill_items_list'):
+            self.bill_items_list.items = self.bill_items
+            print("bill_items_list initialized")  # Debug print
+        else:
+            print("Error: bill_items_list component not found!")  # Debug print
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -171,13 +176,18 @@ class collectPayment(collectPaymentTemplate):
     
     def add_bill_item_button_click(self, **event_args):
         """Add a new blank row to the bill items table"""
-        # Create new item and add to list
+        print("Adding new bill item...")  # Debug print
         new_item = {'billing_item': None}
         self.bill_items.append(new_item)
+        print(f"Current bill items count: {len(self.bill_items)}")  # Debug print
         
-        # Force refresh of repeating panel
-        self.bill_items_list.items = []  # Clear first
-        self.bill_items_list.items = self.bill_items  # Reassign to trigger refresh
+        try:
+            self.bill_items_list.items = []  # Clear first
+            self.bill_items_list.items = self.bill_items  # Reassign to trigger refresh
+            print("Successfully updated bill_items_list")  # Debug print
+        except Exception as e:
+            print(f"Error updating bill_items_list: {str(e)}")  # Debug print
+            raise  # Re-raise the exception to see it in the console
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
