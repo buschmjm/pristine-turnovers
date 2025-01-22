@@ -1,3 +1,58 @@
-components: []
+components:
+- event_bindings: {change: add_item_selector_dropdown_change}
+  layout_properties: {}
+  name: add_item_selector_dropdown
+  properties: {align: full, visible: false}
+  type: DropDown
+- layout_properties: {column: CWNKKA}
+  name: billing_item_name_label
+  properties: {}
+  type: Label
+- layout_properties: {column: SFHDFY}
+  name: cost_each_label
+  properties: {}
+  type: Label
+- event_bindings: {change: quantity_entry_box_change, pressed_enter: quantity_entry_box_pressed_enter}
+  layout_properties: {column: KPDSET}
+  name: quantity_entry_box
+  properties: {}
+  type: TextBox
+- layout_properties: {column: HWGLUQ}
+  name: tax_cost_label
+  properties: {}
+  type: Label
+- layout_properties: {column: MONBTS}
+  name: item_total_label
+  properties: {}
+  type: Label
+- event_bindings: {click: edit_billing_item_click}
+  layout_properties: {column: XOUPKO}
+  name: edit_billing_item
+  properties:
+    icon: fa:edit
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+  type: Button
+- event_bindings: {click: save_billing_item_click}
+  layout_properties: {column: XOUPKO}
+  name: save_billing_item
+  properties:
+    icon: fa:save
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+    visible: false
+  type: Button
+- event_bindings: {click: delete_billing_item_click}
+  layout_properties: {column: YYSMPL}
+  name: delete_billing_item
+  properties:
+    icon: fa:remove
+    spacing:
+      padding: [null, '0', null, '0']
+    text: ''
+    visible: false
+  type: Button
 container: {type: DataRowPanel}
 is_package: true

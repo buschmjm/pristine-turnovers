@@ -152,3 +152,11 @@ class collectPayment(collectPaymentTemplate):
         self.selected_customer_label.text = ""
         self.selected_customer = None
         self.show_existing_customer()  # Return to existing customer view
+
+    def proceed_payment_card_button_click(self, **event_args):
+      """This method is called when the button is clicked"""
+      pass
+
+    def add_bill_item_button_click(self, **event_args):
+      """This method is called when the button is clicked"""
+      pass
