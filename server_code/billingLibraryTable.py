@@ -83,17 +83,16 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Format line item according to QBO requirements
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
-      "Amount": (cost_per * quantity) / 100.0,  # Convert cents to dollars
+      "Amount": (cost_per * quantity) / 100.0,
       "Description": billing_item['name'],
       "SalesItemLineDetail": {
         "ItemRef": {
-          "value": billing_item.get('qbo_item_id', '1'),  # Default to '1' if not set
+          "value": billing_item.get('qbo_item_id', '1'),
           "name": billing_item['name']
         },
-        "UnitPrice": cost_per / 100.0,  # Convert cents to dollars
+        "UnitPrice": cost_per / 100.0,
         "Qty": quantity,
         "TaxCodeRef": {
           "value": "TAX" if billing_item['taxable'] else "NON"
@@ -104,15 +103,19 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Create full invoice data structure according to QBO Invoice schema
+  # Get QBO customer ID - check both possible field names
+  qbo_id = customer_info.get('qbId') or customer_info.get('id')
+  if not qbo_id:
+    raise ValueError("No valid QuickBooks customer ID found")
+
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
-      "value": str(customer_info.get('qbo_id')),  # Use QBO's customer ID
+      "value": str(qbo_id),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     },
     "TxnTaxDetail": {
-      "TotalTax": tax_total / 100.0,  # Convert cents to dollars
+      "TotalTax": tax_total / 100.0,
       "TaxLine": [{
         "Amount": tax_total / 100.0,
         "DetailType": "TaxLineDetail",
@@ -121,7 +124,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
             "value": "TAX"
           },
           "PercentBased": True,
-          "TaxPercent": anvil.server.call('get_tax_rate') * 100,  # Convert decimal to percentage
+          "TaxPercent": anvil.server.call('get_tax_rate') * 100,
           "NetAmountTaxable": subtotal / 100.0
         }
       }]
@@ -132,24 +135,24 @@ def format_qbo_invoice_data(bill_items, customer_info):
     "AllowOnlineACHPayment": True
   }
   
-  return invoice_data, subtotal, tax_total
+  return invoice_data
 
 @anvil.server.callable
 def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
   """Create or update bill and QBO invoice"""
-  if not customer_info.get('qbId'):  # Changed from qbo_id to match database
-    raise ValueError("Customer does not have a valid QuickBooks Online ID")
-    
   try:
-    # Create QBO invoice first
+    # Format and create/update QBO invoice
     invoice_data = format_qbo_invoice_data(bill_items, customer_info)
     
     if existing_invoice_id:
-      qbo_invoice = qboInvoices.update_qbo_invoice(invoice_data)
+      existing_invoice = anvil.server.call('get_qbo_invoice', existing_invoice_id)
+      invoice_data['Id'] = existing_invoice_id
+      invoice_data['SyncToken'] = existing_invoice['SyncToken']
+      qbo_invoice = anvil.server.call('update_qbo_invoice', invoice_data)
     else:
-      qbo_invoice = qboInvoices.create_qbo_invoice(invoice_data)
+      qbo_invoice = anvil.server.call('create_qbo_invoice', invoice_data)
 
-    # Create bill record with items
+    # Save to local database
     bill = save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id)
     
     return {
@@ -158,13 +161,9 @@ def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
     }
     
   except Exception as e:
-    raise ValueError(f"Failed to process bill: {str(e)}")
+    print(f"Error in create_bill_with_items: {str(e)}")  # Add logging
+    raise ValueError(str(e))
 
-def format_qbo_invoice_data(bill_items, customer_info):
-  """Format invoice data for QBO API"""
-  # ... existing QBO formatting code ...
-  # This stays mostly the same but uses 'qbId' instead of 'qbo_id'
-  
 def save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id=None):
   """Save or update bill in local database"""
   try:

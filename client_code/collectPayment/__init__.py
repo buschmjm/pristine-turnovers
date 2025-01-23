@@ -130,6 +130,11 @@ class collectPayment(collectPaymentTemplate):
             
     def select_customer(self, customer, row_template=None):
         """Handle customer selection from template"""
+        # Ensure we have the QBO ID
+        if not customer.get('qbId') and not customer.get('id'):
+            alert("Customer record is missing QuickBooks ID. Please contact support.")
+            return
+        
         self.selected_customer = customer
         
         # Clear all previous highlighting first
@@ -245,12 +250,14 @@ class collectPayment(collectPaymentTemplate):
             return
             
         try:
-            # Confirm with user
             action = "update" if hasattr(self, 'existing_invoice_id') else "create"
             if not confirm(f"This will {action} an invoice in QuickBooks Online. Continue?"):
                 return
                 
-            # Create/update bill and invoice
+            # Add debug print
+            print(f"Selected customer: {self.selected_customer}")
+            print(f"Bill items: {self.bill_items}")
+            
             result = anvil.server.call(
                 'create_bill_with_items',
                 self.bill_items,
@@ -258,12 +265,9 @@ class collectPayment(collectPaymentTemplate):
                 getattr(self, 'existing_invoice_id', None)
             )
             
-            # Store invoice ID and show success
             self.existing_invoice_id = result['qbo_invoice']['Id']
             alert(f"Invoice {result['qbo_invoice']['Id']} processed successfully!")
             
-            # TODO: Navigate to payment form
-            # open_form('paymentProcessing', bill=result['bill'])
-            
         except Exception as e:
+            print(f"Error processing bill: {str(e)}")  # Add logging
             alert(f"Failed to process bill: {str(e)}")
