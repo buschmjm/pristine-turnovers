@@ -95,7 +95,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
         "UnitPrice": cost_per / 100.0,
         "Qty": quantity,
         "TaxCodeRef": {
-          "value": "TAX" if billing_item['taxable'] else "NON"
+          "value": "2" if billing_item['taxable'] else "3"  # Use proper QBO tax code IDs
         }
       }
     }
@@ -103,43 +103,45 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Get QBO customer ID - handle both dict and LiveObjectProxy cases
-  qbo_id = None
-  if isinstance(customer_info, dict):
-    qbo_id = customer_info.get('qbId') or customer_info.get('id')
-  else:
-    # Handle LiveObjectProxy
-    qbo_id = customer_info['qbId'] if hasattr(customer_info, 'qbId') else customer_info['id']
-
+  # Get QBO customer ID
+  qbo_id = customer_info.get('qbId') or customer_info.get('id')
   if not qbo_id:
     raise ValueError("No valid QuickBooks customer ID found")
 
+  # Create invoice data
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
       "value": str(qbo_id),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
-    },
-    "TxnTaxDetail": {
+    }
+  }
+
+  # Only add tax details if there is tax
+  if tax_total > 0:
+    invoice_data["TxnTaxDetail"] = {
       "TotalTax": tax_total / 100.0,
       "TaxLine": [{
         "Amount": tax_total / 100.0,
         "DetailType": "TaxLineDetail",
         "TaxLineDetail": {
           "TaxRateRef": {
-            "value": "TAX"
+            "value": "2"  # Use proper QBO tax rate ID
           },
           "PercentBased": True,
           "TaxPercent": anvil.server.call('get_tax_rate') * 100,
           "NetAmountTaxable": subtotal / 100.0
         }
       }]
-    },
+    }
+
+  # Add other invoice fields
+  invoice_data.update({
     "ApplyTaxAfterDiscount": False,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
     "AllowOnlineACHPayment": True
-  }
+  })
   
   return invoice_data
 
