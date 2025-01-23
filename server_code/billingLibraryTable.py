@@ -94,50 +94,43 @@ def format_qbo_invoice_data(bill_items, customer_info):
           "name": billing_item['name']
         },
         "UnitPrice": cost_per / 100.0,
-        "Qty": quantity
+        "Qty": quantity,
+        "TaxCodeRef": {
+          "value": "TAX" if billing_item['taxable'] else "NON"
+        }
       }
     }
-    
-    # Only add TaxCodeRef if item is taxable
-    if billing_item['taxable']:
-      qbo_line_item["SalesItemLineDetail"]["TaxCodeRef"] = {"value": "TAX"}
-    else:
-      qbo_line_item["SalesItemLineDetail"]["TaxCodeRef"] = {"value": "NON"}
-    
     qbo_line_items.append(qbo_line_item)
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data
+  # Create invoice data with minimal tax details
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
       "value": str(customer_info['qbId']),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
-    }
+    },
+    "ApplyTaxAfterDiscount": False
   }
 
-  # Only add tax details if there is tax
+  # Only add tax details if there is tax, with simplified structure
   if tax_total > 0:
     invoice_data["TxnTaxDetail"] = {
-      "TotalTax": tax_total / 100.0,
+      "TotalTax": tax_total / 100.0,  # Convert cents to dollars
       "TaxLine": [{
         "Amount": tax_total / 100.0,
         "DetailType": "TaxLineDetail",
         "TaxLineDetail": {
-          "TaxRateRef": {
-            "value": "TAX"  # Use standard tax code
-          },
-          "PercentBased": True,
+          "NetAmountTaxable": subtotal / 100.0,
           "TaxPercent": anvil.server.call('get_tax_rate') * 100,
-          "NetAmountTaxable": subtotal / 100.0
+          "PercentBased": True
         }
       }]
     }
 
   # Add other invoice fields
   invoice_data.update({
-    "ApplyTaxAfterDiscount": False,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
     "AllowOnlineACHPayment": True
