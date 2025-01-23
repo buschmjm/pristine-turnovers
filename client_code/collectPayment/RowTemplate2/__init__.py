@@ -31,7 +31,8 @@ class RowTemplate2(RowTemplate2Template):
     # Load dropdown options
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
     self.add_item_selector_dropdown.items = [
-      (item['display'], item['value']) for item in billing_items
+      {'value': item['value'], 'text': item['display']} 
+      for item in billing_items
     ]
     
     # Set default quantity
@@ -167,6 +168,12 @@ class RowTemplate2(RowTemplate2Template):
     get_open_form().show_add_button()
 
   def delete_billing_item_click(self, **event_args):
+    """Remove this row"""
+    get_open_form().remove_bill_item(self.item)
+    # Show add and proceed buttons after delete
+    get_open_form().show_add_button()
+  def delete_billing_item_click(self, **event_args):
+
     """Remove this row"""
     get_open_form().remove_bill_item(self.item)
     # Show add and proceed buttons after delete
