@@ -83,14 +83,14 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Calculate amounts
+    # Calculate amounts ensuring they match QBO requirements
     unit_price = cost_per / 100.0  # Convert cents to dollars
-    amount = (total_cost + tax) / 100.0  # Include tax in amount for TaxInclusive
+    line_amount = unit_price * quantity  # Must match UnitPrice * Qty exactly
     
     # Format line item
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
-      "Amount": amount,
+      "Amount": line_amount,  # Must match UnitPrice * Qty
       "Description": billing_item['name'],
       "SalesItemLineDetail": {
         "ItemRef": {
@@ -105,18 +105,19 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data with tax inclusive setting
+  # Create invoice data with tax handling
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
       "value": str(customer_info['qbId']),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     },
-    "GlobalTaxCalculation": "TaxInclusive",  # Specify tax is included in line amounts
+    "GlobalTaxCalculation": "TaxInclusive",
     "ApplyTaxAfterDiscount": False,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
-    "AllowOnlineACHPayment": True
+    "AllowOnlineACHPayment": True,
+    "TotalAmt": (subtotal + tax_total) / 100.0  # Total in dollars
   }
   
   return invoice_data
