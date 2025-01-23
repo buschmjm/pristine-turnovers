@@ -226,6 +226,58 @@ class collectPayment(collectPaymentTemplate):
             self.bill_items.remove(item)
             self.repeating_panel_2.items = self.bill_items
 
+    def calculate_bill_totals(self):
+        """Calculate subtotal, tax total and grand total for all items"""
+        subtotal = 0
+        tax_total = 0
+        
+        for item in self.bill_items:
+            if 'billing_item' not in item:
+                continue
+            quantity = item.get('quantity', 1)
+            cost = item['billing_item']['mattsCost']
+            subtotal += cost * quantity
+            tax_total += item.get('tax_amount', 0)
+            
+        return {
+            'subtotal': subtotal,
+            'tax_total': tax_total,
+            'grand_total': subtotal + tax_total
+        }
+
     def proceed_payment_card_button_click(self, **event_args):
-      """This method is called when the button is clicked"""
-      pass
+        """Handle proceeding to payment"""
+        if not self.selected_customer or not self.bill_items:
+            alert("Please select a customer and add at least one item to the bill.")
+            return
+            
+        # Confirm with user
+        confirm = alert(
+            message="This will create an invoice in QuickBooks Online. Would you like to proceed?",
+            title="Create Invoice",
+            buttons=["Yes", "No"],
+            large=True
+        )
+        
+        if confirm != "Yes":
+            return
+            
+        try:
+            # Create bill and QBO invoice
+            result = anvil.server.call(
+                'create_bill_with_items',
+                self.bill_items,
+                self.selected_customer
+            )
+            
+            # Show success message
+            alert(
+                f"Invoice #{result['qbo_invoice']['Id']} created successfully!\n"
+                f"Total: ${result['qbo_invoice']['TotalAmt']:.2f}"
+            )
+            
+            # TODO: Navigate to payment processing form
+            # open_form('paymentProcessing', bill=result['bill'])
+            
+        except Exception as e:
+            alert(f"Failed to create bill: {str(e)}")
