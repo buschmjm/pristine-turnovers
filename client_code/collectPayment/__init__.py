@@ -52,48 +52,42 @@ class collectPayment(collectPaymentTemplate):
             alert(f"Failed to create invoice: {e}")
 
     def create_customer_button_click(self, **event_args):
-        """
-        This method is called when the 'Create Customer' button is clicked.
-        """
+        """Handle customer creation"""
         first_name = self.first_name_input.text
         last_name = self.last_name_input.text
         email = self.email_input.text
-
-        if not first_name or not last_name or not email:
-            alert("Please fill in all fields: First Name, Last Name, and Email.")
+        
+        if not all([first_name, last_name, email]):
+            alert("Please fill in all fields")
             return
-
+            
         try:
             result = anvil.server.call('create_and_store_customer', first_name, last_name, email)
             if result["success"]:
-                # Create a customer object that matches our expected format
-                new_customer = {
-                    'firstName': first_name,
-                    'lastName': last_name,
-                    'email': email,
-                    'id': result['customerId']
-                }
-                
                 # Select the new customer and move to billing
-                self.select_customer(new_customer)
-                
-                # Clear the form
+                self.select_customer(result["customerData"])
+                # Clear form
                 self.first_name_input.text = ""
                 self.last_name_input.text = ""
                 self.email_input.text = ""
-                
-                # Refresh the customer list in the background
+                # Refresh list
                 self.refresh_customer_list()
                 
         except Exception as e:
-            error_message = str(e)
-            if "already exists in QuickBooks Online" in error_message:
-                alert(error_message)
-            elif "email already exists" in error_message.lower():
-                alert("This email address is already associated with a customer in QuickBooks Online. "
-                     "Please use a different email or contact support if you believe this is an error.")
+            error_msg = str(e)
+            if "already exists" in error_msg.lower():
+                # Try to find and sync existing customer
+                try:
+                    customer = anvil.server.call('find_qbo_customer_by_email', email)
+                    if customer:
+                        alert("Customer found in QuickBooks. Syncing records...")
+                        self.select_customer(customer)
+                    else:
+                        alert("Error: Customer exists but could not be found")
+                except Exception as sync_error:
+                    alert(f"Error syncing customer: {str(sync_error)}")
             else:
-                alert(f"Failed to create customer: {error_message}")
+                alert(f"Failed to create customer: {error_msg}")
 
     def show_existing_customer(self):
         """Show existing customer card and hide new customer card"""
@@ -130,18 +124,32 @@ class collectPayment(collectPaymentTemplate):
             
     def select_customer(self, customer, row_template=None):
         """Handle customer selection from template"""
-        # Check for QBO ID using direct attribute access
-        if not hasattr(customer, 'qbId') and not hasattr(customer, 'id'):
-            alert("Customer record is missing QuickBooks ID. Please contact support.")
-            return
-        
-        # Convert LiveObjectProxy to dict for easier handling
-        self.selected_customer = {
-            'firstName': customer['firstName'],
-            'lastName': customer['lastName'],
-            'email': customer['email'],
-            'qbId': customer['qbId'] if hasattr(customer, 'qbId') else customer['id']
-        }
+        # Try to ensure customer has QBO ID
+        try:
+            if not hasattr(customer, 'qbId'):
+                has_qbo = anvil.server.call('ensure_customer_qbo_id', customer)
+                if not has_qbo:
+                    alert("Customer not found in QuickBooks. Please create the customer first.")
+                    self.show_new_customer()
+                    # Pre-fill the form
+                    self.first_name_input.text = customer['firstName']
+                    self.last_name_input.text = customer['lastName']
+                    self.email_input.text = customer['email']
+                    return
+                    
+            # Convert LiveObjectProxy to dict for easier handling
+            self.selected_customer = {
+                'firstName': customer['firstName'],
+                'lastName': customer['lastName'],
+                'email': customer['email'],
+                'qbId': customer['qbId']
+            }
+            
+            # Rest of the selection process
+            # ...existing code...
+            
+        except Exception as e:
+            alert(f"Error selecting customer: {str(e)}")
         
         # Clear all previous highlighting first
         self.clear_customer_highlights()

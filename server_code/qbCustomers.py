@@ -166,3 +166,54 @@ def get_recent_customers(months_active=3):
     except Exception as e:
         print(f"Error fetching recent customers: {e}")
         raise
+
+@anvil.server.callable
+def find_qbo_customer_by_email(email):
+    """Find a customer in QBO by email address"""
+    try:
+        access_token = qboUtils.get_qbo_access_token()
+        url = f"{qboUtils.QBO_BASE_URL}{qboUtils.QBO_COMPANY_ID}/query"
+        
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json"
+        }
+        
+        query = f"select * from Customer where PrimaryEmailAddr = '{email}'"
+        response = requests.get(f"{url}?query={query}", headers=headers)
+        data = response.json()
+        
+        if "QueryResponse" in data and "Customer" in data["QueryResponse"]:
+            return data["QueryResponse"]["Customer"][0]
+        return None
+        
+    except Exception as e:
+        print(f"Error finding QBO customer: {str(e)}")
+        return None
+
+@anvil.server.callable
+def sync_customer_with_qbo(customer_row):
+    """Sync customer record with QBO - find or create"""
+    try:
+        # First try to find in QBO by email
+        qbo_customer = find_qbo_customer_by_email(customer_row['email'])
+        
+        if qbo_customer:
+            # Update local record with QBO ID
+            customer_row.update(qbId=qbo_customer['Id'])
+            return qbo_customer['Id']
+            
+        # If not found, create new QBO customer
+        new_qbo_customer = create_qbo_customer(
+            customer_row['firstName'],
+            customer_row['lastName'],
+            customer_row['email']
+        )
+        
+        # Update local record with new QBO ID
+        customer_row.update(qbId=new_qbo_customer['Id'])
+        return new_qbo_customer['Id']
+        
+    except Exception as e:
+        print(f"Error syncing customer with QBO: {str(e)}")
+        raise
