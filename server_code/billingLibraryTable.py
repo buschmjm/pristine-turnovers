@@ -68,10 +68,9 @@ def get_active_billing_items_for_dropdown():
   return dropdown_items
 
 @anvil.server.callable
-def create_bill_with_items(bill_items, customer_info):
-  """Create a new bill and its associated items"""
-  # First create all billing items
-  billing_item_rows = []
+def format_qbo_invoice_data(bill_items, customer_info):
+  """Format invoice data according to QBO API requirements"""
+  qbo_line_items = []
   subtotal = 0
   tax_total = 0
   
@@ -82,7 +81,69 @@ def create_bill_with_items(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Create billing item row
+    # Format line item according to QBO requirements
+    qbo_line_item = {
+      "DetailType": "SalesItemLineDetail",
+      "Amount": (cost_per * quantity) / 100.0,  # Convert cents to dollars
+      "Description": billing_item['name'],
+      "SalesItemLineDetail": {
+        "ItemRef": {
+          "value": billing_item.get('qbo_item_id', '1'),  # Default to '1' if not set
+          "name": billing_item['name']
+        },
+        "UnitPrice": cost_per / 100.0,  # Convert cents to dollars
+        "Qty": quantity,
+        "TaxCodeRef": {
+          "value": "TAX" if billing_item['taxable'] else "NON"
+        }
+      }
+    }
+    qbo_line_items.append(qbo_line_item)
+    subtotal += total_cost
+    tax_total += tax
+
+  # Create full invoice data structure
+  invoice_data = {
+    "Line": qbo_line_items,
+    "CustomerRef": {
+      "value": str(customer_info['id'])
+    },
+    "TxnTaxDetail": {
+      "TotalTax": tax_total / 100.0  # Convert cents to dollars
+    },
+    "ApplyTaxAfterDiscount": False,
+    "EmailStatus": "NeedToSend",
+    "AllowOnlineCreditCardPayment": True,
+    "AllowOnlineACHPayment": True
+  }
+  
+  return invoice_data, subtotal, tax_total
+
+@anvil.server.callable
+def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
+  """Create or update bill and QBO invoice"""
+  # Format QBO invoice data
+  invoice_data, subtotal, tax_total = format_qbo_invoice_data(bill_items, customer_info)
+  
+  # Create or update QBO invoice
+  if existing_invoice_id:
+    # Get existing invoice to get SyncToken
+    existing_invoice = anvil.server.call('get_qbo_invoice', existing_invoice_id)
+    invoice_data['Id'] = existing_invoice_id
+    invoice_data['SyncToken'] = existing_invoice['SyncToken']
+    qbo_invoice = anvil.server.call('update_qbo_invoice', invoice_data)
+  else:
+    qbo_invoice = anvil.server.call('create_qbo_invoice', invoice_data)
+
+  # Create billing items in our database
+  billing_item_rows = []
+  for item in bill_items:
+    billing_item = item['billing_item']
+    quantity = item['quantity']
+    cost_per = billing_item['mattsCost']
+    total_cost = cost_per * quantity
+    tax = item.get('tax_amount', 0)
+    
     item_row = app_tables.billing_items.add_row(
       itemName=billing_item['name'],
       costPer=cost_per,
@@ -91,30 +152,29 @@ def create_bill_with_items(bill_items, customer_info):
       tax=tax
     )
     billing_item_rows.append(item_row)
-    subtotal += total_cost
-    tax_total += tax
 
-  # Create QBO invoice
-  line_items = [{
-    "item_id": item['billing_item'].get('qbo_item_id'),
-    "description": item['billing_item']['name'],
-    "amount": item['billing_item']['mattsCost'] / 100.0,  # Convert cents to dollars
-    "quantity": item['quantity']
-  } for item in bill_items]
-  
-  qbo_invoice = anvil.server.call('create_qbo_invoice', line_items, customer_info)
-  
-  # Create bill record
-  bill = app_tables.bills.add_row(
-    relatedItems=billing_item_rows,
-    subtotal=subtotal,
-    taxTotal=tax_total,
-    grandTotal=subtotal + tax_total,
-    status='pending',
-    createdAt=datetime.now(),
-    captureStatus=False,
-    invoiceID=qbo_invoice['Id']
-  )
+  # Create or update bill record
+  if existing_invoice_id:
+    bill = app_tables.bills.get(invoiceID=existing_invoice_id)
+    if bill:
+      bill.update(
+        relatedItems=billing_item_rows,
+        subtotal=subtotal,
+        taxTotal=tax_total,
+        grandTotal=subtotal + tax_total,
+        status='pending'
+      )
+  else:
+    bill = app_tables.bills.add_row(
+      relatedItems=billing_item_rows,
+      subtotal=subtotal, 
+      taxTotal=tax_total,
+      grandTotal=subtotal + tax_total,
+      status='pending',
+      createdAt=datetime.now(),
+      captureStatus=False,
+      invoiceID=qbo_invoice['Id']
+    )
   
   return {
     'bill': bill,

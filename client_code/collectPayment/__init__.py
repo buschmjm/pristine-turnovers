@@ -251,10 +251,14 @@ class collectPayment(collectPaymentTemplate):
             alert("Please select a customer and add at least one item to the bill.")
             return
             
+        # Check if this is an update to existing bill
+        existing_invoice_id = getattr(self, 'existing_invoice_id', None)
+        action_text = "update" if existing_invoice_id else "create"
+            
         # Confirm with user
         confirm = alert(
-            message="This will create an invoice in QuickBooks Online. Would you like to proceed?",
-            title="Create Invoice",
+            message=f"This will {action_text} an invoice in QuickBooks Online. Would you like to proceed?",
+            title=f"{action_text.title()} Invoice",
             buttons=["Yes", "No"],
             large=True
         )
@@ -263,21 +267,25 @@ class collectPayment(collectPaymentTemplate):
             return
             
         try:
-            # Create bill and QBO invoice
+            # Create/update bill and QBO invoice
             result = anvil.server.call(
                 'create_bill_with_items',
                 self.bill_items,
-                self.selected_customer
+                self.selected_customer,
+                existing_invoice_id
             )
             
             # Show success message
             alert(
-                f"Invoice #{result['qbo_invoice']['Id']} created successfully!\n"
+                f"Invoice #{result['qbo_invoice']['Id']} {action_text}d successfully!\n"
                 f"Total: ${result['qbo_invoice']['TotalAmt']:.2f}"
             )
+            
+            # Store invoice ID for potential future updates
+            self.existing_invoice_id = result['qbo_invoice']['Id']
             
             # TODO: Navigate to payment processing form
             # open_form('paymentProcessing', bill=result['bill'])
             
         except Exception as e:
-            alert(f"Failed to create bill: {str(e)}")
+            alert(f"Failed to {action_text} bill: {str(e)}")
