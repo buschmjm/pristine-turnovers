@@ -14,10 +14,13 @@ class ItemTemplate1(ItemTemplate1Template):
     # Get the item data from the properties passed to this template
     if 'item' in properties:
       customer = properties['item']
+      print(f"Loading customer: {customer['firstName']} {customer['lastName']}")  # Debug print
       self.name_label.text = f"{customer['firstName']} {customer['lastName']}"
-      self.email_label.text = customer['email']
+      self.email_label.text = customer.get('email', 'No email')
+      self.qb_id_label.text = f"QB ID: {customer.get('qbId', 'Not synced')}"  # Optional: show QB ID status
 
   def select_customer_button_click(self, **event_args):
     """Handle customer selection"""
     customer = self.item  # Get the customer data from this template's item
+    print(f"Selected customer: {customer['firstName']} {customer['lastName']}")  # Debug print
     get_open_form().select_customer(customer, self)  # Call parent form's selection handler

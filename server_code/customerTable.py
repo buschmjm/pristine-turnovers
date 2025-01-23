@@ -10,21 +10,30 @@ from . import qbCustomers
 def customerQueries(email=None, startDate=None, endDate=None, firstName=None, lastName=None):
     print("Starting customer query...")  # Debug print
     try:
-        customers = list(app_tables.customers.search())
+        # Get all customers, sorted by last name
+        customers = list(app_tables.customers.search(
+            tables.order_by("lastName", ascending=True)
+        ))
         print(f"Found {len(customers)} customers")  # Debug print
-        
-        # Check for missing QBO IDs and try to sync
+
+        # Convert each customer to a dictionary to avoid LiveObjectProxy issues
+        formatted_customers = []
         for customer in customers:
-            if not customer.get('qbId'):
-                try:
-                    qbCustomers.sync_customer_with_qbo(customer)
-                except Exception as e:
-                    print(f"Failed to sync customer {customer['email']}: {str(e)}")
-                    
-        return customers
+            customer_dict = {
+                'firstName': customer['firstName'],
+                'lastName': customer['lastName'],
+                'email': customer['email'],
+                'qbId': customer.get('qbId'),  # Use get() for optional fields
+                'lastAccessed': customer.get('lastAccessed')
+            }
+            formatted_customers.append(customer_dict)
+            print(f"Loaded customer: {customer_dict['firstName']} {customer_dict['lastName']}")
+
+        return formatted_customers
+
     except Exception as e:
         print(f"Error in customerQueries: {str(e)}")  # Debug print
-        return []
+        raise  # Re-raise the exception for better error tracking
 
 @anvil.server.callable
 def ensure_customer_qbo_id(customer):

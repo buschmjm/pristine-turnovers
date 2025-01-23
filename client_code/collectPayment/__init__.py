@@ -21,13 +21,26 @@ class collectPayment(collectPaymentTemplate):
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
-        print("Starting customer load...")  # Debug print
+        print("Starting customer load...")
         try:
+            # Get customers from server
             customers = anvil.server.call("customerQueries")
-            print(f"Retrieved {len(customers)} customers")  # Debug print
-            self.repeating_panel_1.items = customers if customers else []
+            print(f"Retrieved {len(customers)} customers")
+            
+            if customers:
+                # Sort customers by last name
+                sorted_customers = sorted(customers, key=lambda x: x['lastName'])
+                print("Customers sorted successfully")
+                
+                # Update repeating panel
+                self.repeating_panel_1.items = sorted_customers
+                print("Repeating panel updated")
+            else:
+                print("No customers returned from server")
+                self.repeating_panel_1.items = []
+                
         except Exception as e:
-            print(f"Error loading customers: {str(e)}")  # Debug print
+            print(f"Error loading customers: {str(e)}")
             alert("Failed to load customers. Please try refreshing the page.")
             
     def refresh_customer_list(self):
