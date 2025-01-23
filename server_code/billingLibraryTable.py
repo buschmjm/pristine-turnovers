@@ -83,58 +83,41 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Format line item with correct tax codes
+    # Calculate amounts
+    unit_price = cost_per / 100.0  # Convert cents to dollars
+    amount = (total_cost + tax) / 100.0  # Include tax in amount for TaxInclusive
+    
+    # Format line item
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
-      "Amount": (cost_per * quantity) / 100.0,
+      "Amount": amount,
       "Description": billing_item['name'],
       "SalesItemLineDetail": {
         "ItemRef": {
           "value": billing_item.get('qbo_item_id', '1'),
           "name": billing_item['name']
         },
-        "UnitPrice": cost_per / 100.0,
-        "Qty": quantity,
-        "TaxCodeRef": {
-          "value": "TAX" if billing_item['taxable'] else "NON"
-        }
+        "UnitPrice": unit_price,
+        "Qty": quantity
       }
     }
     qbo_line_items.append(qbo_line_item)
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data with minimal tax details
+  # Create invoice data with tax inclusive setting
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
       "value": str(customer_info['qbId']),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     },
-    "ApplyTaxAfterDiscount": False
-  }
-
-  # Only add tax details if there is tax, with simplified structure
-  if tax_total > 0:
-    invoice_data["TxnTaxDetail"] = {
-      "TotalTax": tax_total / 100.0,  # Convert cents to dollars
-      "TaxLine": [{
-        "Amount": tax_total / 100.0,
-        "DetailType": "TaxLineDetail",
-        "TaxLineDetail": {
-          "NetAmountTaxable": subtotal / 100.0,
-          "TaxPercent": anvil.server.call('get_tax_rate') * 100,
-          "PercentBased": True
-        }
-      }]
-    }
-
-  # Add other invoice fields
-  invoice_data.update({
+    "GlobalTaxCalculation": "TaxInclusive",  # Specify tax is included in line amounts
+    "ApplyTaxAfterDiscount": False,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
     "AllowOnlineACHPayment": True
-  })
+  }
   
   return invoice_data
 
