@@ -15,9 +15,23 @@ class ItemTemplate1(ItemTemplate1Template):
     if 'item' in properties:
       customer = properties['item']
       print(f"Loading customer: {customer['firstName']} {customer['lastName']}")  # Debug print
+      
+      # Handle potentially missing fields safely
+      email = "No email"
+      try:
+          email = customer['email']
+      except KeyError:
+          pass
+          
+      qb_id = "Not synced"
+      try:
+          qb_id = customer['qbId']
+      except KeyError:
+          pass
+          
       self.name_label.text = f"{customer['firstName']} {customer['lastName']}"
-      self.email_label.text = customer.get('email', 'No email')
-      self.qb_id_label.text = f"QB ID: {customer.get('qbId', 'Not synced')}"  # Optional: show QB ID status
+      self.email_label.text = email
+      self.qb_id_label.text = f"QB ID: {qb_id}"
 
   def select_customer_button_click(self, **event_args):
     """Handle customer selection"""
