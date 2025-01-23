@@ -171,7 +171,9 @@ def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
 
   # Create or update bill record
   if existing_invoice_id:
-    bill = app_tables.bills.get(invoiceID=existing_invoice_id)
+    # Search for existing bill using invoice ID
+    existing_bills = app_tables.bills.search(invoiceID=existing_invoice_id)
+    bill = next(iter(existing_bills), None)
     if bill:
       bill.update(
         relatedItems=billing_item_rows,
@@ -181,6 +183,7 @@ def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
         status='pending'
       )
   else:
+    # Create new bill
     bill = app_tables.bills.add_row(
       relatedItems=billing_item_rows,
       subtotal=subtotal, 
@@ -192,6 +195,9 @@ def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
       invoiceID=qbo_invoice['Id']
     )
   
+  if not bill:
+    raise ValueError("Failed to create or update bill record")
+    
   return {
     'bill': bill,
     'qbo_invoice': qbo_invoice
