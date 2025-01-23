@@ -105,7 +105,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data with tax handling
+  # Create invoice data with required email info
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
@@ -114,10 +114,15 @@ def format_qbo_invoice_data(bill_items, customer_info):
     },
     "GlobalTaxCalculation": "TaxInclusive",
     "ApplyTaxAfterDiscount": False,
+    "TotalAmt": (subtotal + tax_total) / 100.0,  # Total in dollars
+    
+    # Add email info
+    "BillEmail": {
+      "Address": customer_info['email']
+    },
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
-    "AllowOnlineACHPayment": True,
-    "TotalAmt": (subtotal + tax_total) / 100.0  # Total in dollars
+    "AllowOnlineACHPayment": True
   }
   
   return invoice_data
