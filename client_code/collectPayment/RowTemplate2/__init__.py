@@ -135,7 +135,8 @@ class RowTemplate2(RowTemplate2Template):
       return
     
     # Get the selected value (it's a tuple of (display_text, item_data))
-    display_text, selected_item = self.add_item_selector_dropdown.selected_value
+    selected_value = self.add_item_selector_dropdown.selected_value
+    display_text, selected_item = selected_value
     quantity = int(self.quantity_entry_box.text or 1)
     
     # Calculate tax
