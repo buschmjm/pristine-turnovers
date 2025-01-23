@@ -102,14 +102,27 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Create full invoice data structure
+  # Create full invoice data structure according to QBO Invoice schema
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
-      "value": str(customer_info['id'])
+      "value": str(customer_info.get('qbo_id')),  # Use QBO's customer ID
+      "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     },
     "TxnTaxDetail": {
-      "TotalTax": tax_total / 100.0  # Convert cents to dollars
+      "TotalTax": tax_total / 100.0,  # Convert cents to dollars
+      "TaxLine": [{
+        "Amount": tax_total / 100.0,
+        "DetailType": "TaxLineDetail",
+        "TaxLineDetail": {
+          "TaxRateRef": {
+            "value": "TAX"
+          },
+          "PercentBased": True,
+          "TaxPercent": anvil.server.call('get_tax_rate') * 100,  # Convert decimal to percentage
+          "NetAmountTaxable": subtotal / 100.0
+        }
+      }]
     },
     "ApplyTaxAfterDiscount": False,
     "EmailStatus": "NeedToSend",
@@ -122,6 +135,9 @@ def format_qbo_invoice_data(bill_items, customer_info):
 @anvil.server.callable
 def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
   """Create or update bill and QBO invoice"""
+  if not customer_info.get('qbo_id'):
+    raise ValueError("Customer does not have a valid QuickBooks Online ID")
+    
   # Format QBO invoice data
   invoice_data, subtotal, tax_total = format_qbo_invoice_data(bill_items, customer_info)
   
