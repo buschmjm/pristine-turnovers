@@ -130,12 +130,18 @@ class collectPayment(collectPaymentTemplate):
             
     def select_customer(self, customer, row_template=None):
         """Handle customer selection from template"""
-        # Ensure we have the QBO ID
-        if not customer.get('qbId') and not customer.get('id'):
+        # Check for QBO ID using direct attribute access
+        if not hasattr(customer, 'qbId') and not hasattr(customer, 'id'):
             alert("Customer record is missing QuickBooks ID. Please contact support.")
             return
         
-        self.selected_customer = customer
+        # Convert LiveObjectProxy to dict for easier handling
+        self.selected_customer = {
+            'firstName': customer['firstName'],
+            'lastName': customer['lastName'],
+            'email': customer['email'],
+            'qbId': customer['qbId'] if hasattr(customer, 'qbId') else customer['id']
+        }
         
         # Clear all previous highlighting first
         self.clear_customer_highlights()

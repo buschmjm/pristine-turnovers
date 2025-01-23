@@ -103,8 +103,14 @@ def format_qbo_invoice_data(bill_items, customer_info):
     subtotal += total_cost
     tax_total += tax
 
-  # Get QBO customer ID - check both possible field names
-  qbo_id = customer_info.get('qbId') or customer_info.get('id')
+  # Get QBO customer ID - handle both dict and LiveObjectProxy cases
+  qbo_id = None
+  if isinstance(customer_info, dict):
+    qbo_id = customer_info.get('qbId') or customer_info.get('id')
+  else:
+    # Handle LiveObjectProxy
+    qbo_id = customer_info['qbId'] if hasattr(customer_info, 'qbId') else customer_info['id']
+
   if not qbo_id:
     raise ValueError("No valid QuickBooks customer ID found")
 
