@@ -83,6 +83,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
+    # Format line item with correct tax codes
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
       "Amount": (cost_per * quantity) / 100.0,
@@ -93,26 +94,25 @@ def format_qbo_invoice_data(bill_items, customer_info):
           "name": billing_item['name']
         },
         "UnitPrice": cost_per / 100.0,
-        "Qty": quantity,
-        "TaxCodeRef": {
-          "value": "2" if billing_item['taxable'] else "3"  # Use proper QBO tax code IDs
-        }
+        "Qty": quantity
       }
     }
+    
+    # Only add TaxCodeRef if item is taxable
+    if billing_item['taxable']:
+      qbo_line_item["SalesItemLineDetail"]["TaxCodeRef"] = {"value": "TAX"}
+    else:
+      qbo_line_item["SalesItemLineDetail"]["TaxCodeRef"] = {"value": "NON"}
+    
     qbo_line_items.append(qbo_line_item)
     subtotal += total_cost
     tax_total += tax
-
-  # Get QBO customer ID
-  qbo_id = customer_info.get('qbId') or customer_info.get('id')
-  if not qbo_id:
-    raise ValueError("No valid QuickBooks customer ID found")
 
   # Create invoice data
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
-      "value": str(qbo_id),
+      "value": str(customer_info['qbId']),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     }
   }
@@ -126,7 +126,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
         "DetailType": "TaxLineDetail",
         "TaxLineDetail": {
           "TaxRateRef": {
-            "value": "2"  # Use proper QBO tax rate ID
+            "value": "TAX"  # Use standard tax code
           },
           "PercentBased": True,
           "TaxPercent": anvil.server.call('get_tax_rate') * 100,
