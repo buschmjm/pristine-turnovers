@@ -30,10 +30,14 @@ class RowTemplate2(RowTemplate2Template):
     
     # Load dropdown options
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
-    self.add_item_selector_dropdown.items = [
-      {'value': item['value'], 'text': item['display']} 
-      for item in billing_items
-    ]
+    formatted_items = []
+    for item in billing_items:
+      # Create display string
+      display = item['display']
+      # Create tuple of (display string, value dictionary)
+      formatted_items.append((display, item['value']))
+    
+    self.add_item_selector_dropdown.items = formatted_items
     
     # Set default quantity
     self.quantity_entry_box.text = "1"
@@ -100,14 +104,16 @@ class RowTemplate2(RowTemplate2Template):
     
     # Reload dropdown options to ensure we have fresh data
     billing_items = anvil.server.call('get_active_billing_items_for_dropdown')
-    self.add_item_selector_dropdown.items = [
-      (item['display'], item['value']) for item in billing_items
-    ]
+    formatted_items = []
+    for item in billing_items:
+      formatted_items.append((item['display'], item['value']))
+    
+    self.add_item_selector_dropdown.items = formatted_items
     
     # Find and select the matching item
-    for item in self.add_item_selector_dropdown.items:
-      if item[1]['name'] == current_item['name']:
-        self.add_item_selector_dropdown.selected_value = item
+    for display, value in formatted_items:
+      if value['name'] == current_item['name']:
+        self.add_item_selector_dropdown.selected_value = value
         break
         
     self.quantity_entry_box.text = str(self.item.get('quantity', 1))
@@ -135,9 +141,8 @@ class RowTemplate2(RowTemplate2Template):
       alert("Please select an item.")
       return
     
-    # Get the selected value (it's a tuple of (display_text, item_data))
-    selected_value = self.add_item_selector_dropdown.selected_value
-    display_text, selected_item = selected_value
+    # Get the selected item data
+    selected_item = self.add_item_selector_dropdown.selected_value
     quantity = int(self.quantity_entry_box.text or 1)
     
     # Calculate tax
