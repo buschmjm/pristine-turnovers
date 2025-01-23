@@ -83,14 +83,14 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Calculate amounts ensuring they match QBO requirements
+    # Calculate amounts for base price only (tax handled separately)
     unit_price = cost_per / 100.0  # Convert cents to dollars
     line_amount = unit_price * quantity  # Must match UnitPrice * Qty exactly
     
     # Format line item
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
-      "Amount": line_amount,  # Must match UnitPrice * Qty
+      "Amount": line_amount,  # Base amount without tax
       "Description": billing_item['name'],
       "SalesItemLineDetail": {
         "ItemRef": {
@@ -98,28 +98,33 @@ def format_qbo_invoice_data(bill_items, customer_info):
           "name": billing_item['name']
         },
         "UnitPrice": unit_price,
-        "Qty": quantity
+        "Qty": quantity,
+        "TaxCodeRef": {
+          "value": "TAX" if billing_item['taxable'] else "NON"
+        }
       }
     }
     qbo_line_items.append(qbo_line_item)
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data with required email info
+  # Create invoice data
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
       "value": str(customer_info['qbId']),
       "name": f"{customer_info['firstName']} {customer_info['lastName']}"
     },
-    "GlobalTaxCalculation": "TaxInclusive",
-    "ApplyTaxAfterDiscount": False,
-    "TotalAmt": (subtotal + tax_total) / 100.0,  # Total in dollars
-    
-    # Add email info
     "BillEmail": {
       "Address": customer_info['email']
     },
+    # Add tax detail if there is tax
+    "TxnTaxDetail": {
+      "TxnTaxCodeRef": {
+        "value": "TAX"
+      },
+      "TotalTax": tax_total / 100.0  # Total tax in dollars
+    } if tax_total > 0 else None,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
     "AllowOnlineACHPayment": True
