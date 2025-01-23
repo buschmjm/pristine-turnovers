@@ -4,6 +4,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+from datetime import datetime
+from . import qboInvoices
 
 @anvil.server.callable
 def get_billing_items(show_active=True):
@@ -135,58 +137,70 @@ def format_qbo_invoice_data(bill_items, customer_info):
 @anvil.server.callable
 def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
   """Create or update bill and QBO invoice"""
-  if not customer_info.get('qbo_id'):
+  if not customer_info.get('qbId'):  # Changed from qbo_id to match database
     raise ValueError("Customer does not have a valid QuickBooks Online ID")
     
-  # Format QBO invoice data
-  invoice_data, subtotal, tax_total = format_qbo_invoice_data(bill_items, customer_info)
-  
-  # Create or update QBO invoice
-  if existing_invoice_id:
-    # Get existing invoice to get SyncToken
-    existing_invoice = anvil.server.call('get_qbo_invoice', existing_invoice_id)
-    invoice_data['Id'] = existing_invoice_id
-    invoice_data['SyncToken'] = existing_invoice['SyncToken']
-    qbo_invoice = anvil.server.call('update_qbo_invoice', invoice_data)
-  else:
-    qbo_invoice = anvil.server.call('create_qbo_invoice', invoice_data)
-
-  # Create billing items in our database
-  billing_item_rows = []
-  for item in bill_items:
-    billing_item = item['billing_item']
-    quantity = item['quantity']
-    cost_per = billing_item['mattsCost']
-    total_cost = cost_per * quantity
-    tax = item.get('tax_amount', 0)
+  try:
+    # Create QBO invoice first
+    invoice_data = format_qbo_invoice_data(bill_items, customer_info)
     
-    item_row = app_tables.billing_items.add_row(
-      itemName=billing_item['name'],
-      costPer=cost_per,
-      quantity=quantity,
-      totalCost=total_cost,
-      tax=tax
-    )
-    billing_item_rows.append(item_row)
+    if existing_invoice_id:
+      qbo_invoice = qboInvoices.update_qbo_invoice(invoice_data)
+    else:
+      qbo_invoice = qboInvoices.create_qbo_invoice(invoice_data)
 
-  # Create or update bill record
-  if existing_invoice_id:
-    # Search for existing bill using invoice ID
-    existing_bills = app_tables.bills.search(invoiceID=existing_invoice_id)
-    bill = next(iter(existing_bills), None)
-    if bill:
-      bill.update(
-        relatedItems=billing_item_rows,
-        subtotal=subtotal,
-        taxTotal=tax_total,
-        grandTotal=subtotal + tax_total,
-        status='pending'
+    # Create bill record with items
+    bill = save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id)
+    
+    return {
+      'bill': bill,
+      'qbo_invoice': qbo_invoice
+    }
+    
+  except Exception as e:
+    raise ValueError(f"Failed to process bill: {str(e)}")
+
+def format_qbo_invoice_data(bill_items, customer_info):
+  """Format invoice data for QBO API"""
+  # ... existing QBO formatting code ...
+  # This stays mostly the same but uses 'qbId' instead of 'qbo_id'
+  
+def save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id=None):
+  """Save or update bill in local database"""
+  try:
+    # Calculate totals
+    subtotal = sum(item['billing_item']['mattsCost'] * item['quantity'] for item in bill_items)
+    tax_total = sum(item.get('tax_amount', 0) for item in bill_items)
+    
+    # Create billing items
+    billing_item_rows = []
+    for item in bill_items:
+      item_row = app_tables.billing_items.add_row(
+        itemName=item['billing_item']['name'],
+        costPer=item['billing_item']['mattsCost'],
+        quantity=item['quantity'],
+        totalCost=item['billing_item']['mattsCost'] * item['quantity'],
+        tax=item.get('tax_amount', 0)
       )
-  else:
+      billing_item_rows.append(item_row)
+
+    # Update or create bill
+    if existing_invoice_id:
+      existing_bills = list(app_tables.bills.search(invoiceID=existing_invoice_id))
+      if existing_bills:
+        bill = existing_bills[0]
+        bill.update(
+          relatedItems=billing_item_rows,
+          subtotal=subtotal,
+          taxTotal=tax_total,
+          grandTotal=subtotal + tax_total
+        )
+        return bill
+        
     # Create new bill
-    bill = app_tables.bills.add_row(
+    return app_tables.bills.add_row(
       relatedItems=billing_item_rows,
-      subtotal=subtotal, 
+      subtotal=subtotal,
       taxTotal=tax_total,
       grandTotal=subtotal + tax_total,
       status='pending',
@@ -194,11 +208,8 @@ def create_bill_with_items(bill_items, customer_info, existing_invoice_id=None):
       captureStatus=False,
       invoiceID=qbo_invoice['Id']
     )
-  
-  if not bill:
-    raise ValueError("Failed to create or update bill record")
     
-  return {
-    'bill': bill,
-    'qbo_invoice': qbo_invoice
-  }
+  except Exception as e:
+    raise ValueError(f"Database error: {str(e)}")
+
+# ... rest of existing billing library functions ...

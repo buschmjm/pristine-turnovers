@@ -6,29 +6,18 @@ from anvil.tables import app_tables
 
 class collectPayment(collectPaymentTemplate):
     def __init__(self, **properties):
-        print("Starting form initialization...")  # Debug print
         self.init_components(**properties)
         self.show_existing_customer()
-        
-        # Simple direct load without delayed loading
         self.load_customers()
-        print("Form initialization complete")  # Debug print
         self.selected_customer = None
-        self.bill_card.visible = False  # Ensure bill card starts hidden
-        self.selected_row = None  # Track selected row for highlighting
-        self.customer_table.visible = True
-        self.bill_items = []  # Initialize empty list for bill items
-        print("Initializing bill_items_list...")  # Debug print
-        if hasattr(self, 'bill_items_list'):
-            self.bill_items_list.items = self.bill_items
-            self.bill_items_list.role = 'multiple'  # Ensure proper list mode
-            print("bill_items_list initialized")  # Debug print
-        else:
-            print("Error: bill_items_list component not found!")  # Debug print
         self.bill_items = []
-        # Initialize the repeating panel, not the data grid
+        self.setup_initial_state()
+    
+    def setup_initial_state(self):
+        """Initialize form state"""
+        self.bill_card.visible = False
+        self.customer_table.visible = True
         self.repeating_panel_2.items = self.bill_items
-        print("Bill items panel initialized")
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -251,41 +240,30 @@ class collectPayment(collectPaymentTemplate):
             alert("Please select a customer and add at least one item to the bill.")
             return
             
-        # Check if this is an update to existing bill
-        existing_invoice_id = getattr(self, 'existing_invoice_id', None)
-        action_text = "update" if existing_invoice_id else "create"
-            
-        # Confirm with user
-        confirm = alert(
-            message=f"This will {action_text} an invoice in QuickBooks Online. Would you like to proceed?",
-            title=f"{action_text.title()} Invoice",
-            buttons=["Yes", "No"],
-            large=True
-        )
-        
-        if confirm != "Yes":
+        if not all('billing_item' in item for item in self.bill_items):
+            alert("Please complete all billing items.")
             return
             
         try:
-            # Create/update bill and QBO invoice
+            # Confirm with user
+            action = "update" if hasattr(self, 'existing_invoice_id') else "create"
+            if not confirm(f"This will {action} an invoice in QuickBooks Online. Continue?"):
+                return
+                
+            # Create/update bill and invoice
             result = anvil.server.call(
                 'create_bill_with_items',
                 self.bill_items,
                 self.selected_customer,
-                existing_invoice_id
+                getattr(self, 'existing_invoice_id', None)
             )
             
-            # Show success message
-            alert(
-                f"Invoice #{result['qbo_invoice']['Id']} {action_text}d successfully!\n"
-                f"Total: ${result['qbo_invoice']['TotalAmt']:.2f}"
-            )
-            
-            # Store invoice ID for potential future updates
+            # Store invoice ID and show success
             self.existing_invoice_id = result['qbo_invoice']['Id']
+            alert(f"Invoice {result['qbo_invoice']['Id']} processed successfully!")
             
-            # TODO: Navigate to payment processing form
+            # TODO: Navigate to payment form
             # open_form('paymentProcessing', bill=result['bill'])
             
         except Exception as e:
-            alert(f"Failed to {action_text} bill: {str(e)}")
+            alert(f"Failed to process bill: {str(e)}")
