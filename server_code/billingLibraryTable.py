@@ -112,7 +112,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
       "Description": "Sales Tax",
       "SalesItemLineDetail": {
         "ItemRef": {
-          "value": "TAX",  # Use your tax item ID from QBO
+          "value": "8",  # Use actual QBO Sales Tax item ID - you'll need to create this in QBO
           "name": "Sales Tax"
         },
         "UnitPrice": tax_total / 100.0,
@@ -121,7 +121,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
     }
     qbo_line_items.append(tax_line_item)
 
-  # Create invoice data without tax detail section
+  # Create invoice data
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
