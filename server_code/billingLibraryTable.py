@@ -74,6 +74,7 @@ def format_qbo_invoice_data(bill_items, customer_info):
   subtotal = 0
   tax_total = 0
   
+  # Format regular line items without tax
   for item in bill_items:
     billing_item = item['billing_item']
     quantity = item['quantity']
@@ -81,14 +82,14 @@ def format_qbo_invoice_data(bill_items, customer_info):
     total_cost = cost_per * quantity
     tax = item.get('tax_amount', 0)
     
-    # Calculate amounts for base price only (tax handled separately)
+    # Calculate amounts for base price
     unit_price = cost_per / 100.0  # Convert cents to dollars
-    line_amount = unit_price * quantity  # Must match UnitPrice * Qty exactly
+    line_amount = unit_price * quantity
     
-    # Format line item
+    # Format line item without tax references
     qbo_line_item = {
       "DetailType": "SalesItemLineDetail",
-      "Amount": line_amount,  # Base amount without tax
+      "Amount": line_amount,
       "Description": billing_item['name'],
       "SalesItemLineDetail": {
         "ItemRef": {
@@ -96,17 +97,31 @@ def format_qbo_invoice_data(bill_items, customer_info):
           "name": billing_item['name']
         },
         "UnitPrice": unit_price,
-        "Qty": quantity,
-        "TaxCodeRef": {
-          "value": "TAX" if billing_item['taxable'] else "NON"
-        }
+        "Qty": quantity
       }
     }
     qbo_line_items.append(qbo_line_item)
     subtotal += total_cost
     tax_total += tax
 
-  # Create invoice data
+  # Add sales tax as separate line item if there is tax
+  if tax_total > 0:
+    tax_line_item = {
+      "DetailType": "SalesItemLineDetail",
+      "Amount": tax_total / 100.0,  # Convert cents to dollars
+      "Description": "Sales Tax",
+      "SalesItemLineDetail": {
+        "ItemRef": {
+          "value": "TAX",  # Use your tax item ID from QBO
+          "name": "Sales Tax"
+        },
+        "UnitPrice": tax_total / 100.0,
+        "Qty": 1
+      }
+    }
+    qbo_line_items.append(tax_line_item)
+
+  # Create invoice data without tax detail section
   invoice_data = {
     "Line": qbo_line_items,
     "CustomerRef": {
@@ -116,13 +131,6 @@ def format_qbo_invoice_data(bill_items, customer_info):
     "BillEmail": {
       "Address": customer_info['email']
     },
-    # Add tax detail if there is tax
-    "TxnTaxDetail": {
-      "TxnTaxCodeRef": {
-        "value": "TAX"
-      },
-      "TotalTax": tax_total / 100.0  # Total tax in dollars
-    } if tax_total > 0 else None,
     "EmailStatus": "NeedToSend",
     "AllowOnlineCreditCardPayment": True,
     "AllowOnlineACHPayment": True
