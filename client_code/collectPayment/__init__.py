@@ -305,20 +305,34 @@ class collectPayment(collectPaymentTemplate):
             
     def update_totals(self):
         """Update all total labels"""
-        subtotal = 0
-        tax_total = 0
-        
-        for item in self.bill_items:
-            if 'billing_item' not in item:
-                continue
-            quantity = item.get('quantity', 1)
-            cost = item['billing_item']['mattsCost']
-            subtotal += cost * quantity
-            tax_total += item.get('tax_amount', 0)
+        try:
+            subtotal = 0
+            tax_total = 0
             
-        grand_total = subtotal + tax_total
-        
-        # Update labels with formatted amounts
-        self.sub_total_label.text = f"${subtotal//100}.{subtotal%100:02d}"
-        self.taxes_total_label.text = f"${tax_total//100}.{tax_total%100:02d}"
-        self.bill_total_label.text = f"${grand_total//100}.{grand_total%100:02d}"
+            for item in self.bill_items:
+                if not item or 'billing_item' not in item:
+                    continue
+                    
+                quantity = int(item.get('quantity', 1))
+                cost = item['billing_item']['mattsCost']
+                subtotal += cost * quantity
+                
+                # Safely handle tax amount
+                tax_amount = 0
+                if item.get('tax_amount') is not None:
+                    tax_amount = item['tax_amount']
+                tax_total += tax_amount
+                
+            grand_total = subtotal + tax_total
+            
+            # Update labels with formatted amounts
+            self.sub_total_label.text = f"${subtotal//100}.{subtotal%100:02d}"
+            self.taxes_total_label.text = f"${tax_total//100}.{tax_total%100:02d}"
+            self.bill_total_label.text = f"${grand_total//100}.{grand_total%100:02d}"
+            
+        except Exception as e:
+            print(f"Error updating totals: {str(e)}")
+            # Set default values if there's an error
+            self.sub_total_label.text = "$0.00"
+            self.taxes_total_label.text = "$0.00"
+            self.bill_total_label.text = "$0.00"
