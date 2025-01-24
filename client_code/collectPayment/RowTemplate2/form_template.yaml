@@ -21,7 +21,7 @@ components:
   properties:
     icon: fa:edit
     spacing:
-      padding: [null, '0', null, '0']
+      padding: [null, '5', null, '5']
     text: ''
   type: Button
 - components:
@@ -31,7 +31,7 @@ components:
     properties:
       icon: fa:remove
       spacing:
-        padding: [null, '0', null, '0']
+        padding: [null, '5', null, '5']
       text: ''
       visible: true
     type: Button
@@ -51,7 +51,7 @@ components:
     properties:
       icon: fa:save
       spacing:
-        padding: [null, '0', null, '0']
+        padding: [null, '5', null, '5']
       text: ''
       visible: true
     type: Button
