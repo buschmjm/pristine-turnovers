@@ -116,9 +116,33 @@ components:
         - {data_key: tax, expand: false, id: HWGLUQ, title: Tax Cost, width: 100.564453125}
         - {data_key: totalCost, expand: false, id: MONBTS, title: Item Total Cost, width: 114.1287841796875}
       type: DataGrid
+    - layout_properties: {grid_position: 'XWEIXS,MLWEHE'}
+      name: spacer_5
+      properties: {height: 105.2930908203125}
+      type: Spacer
+    - layout_properties: {grid_position: 'XWEIXS,MMXWTC NFJQFS,YTSCAN'}
+      name: label_2
+      properties: {align: right, text: 'Tax Total:'}
+      type: Label
+    - layout_properties: {grid_position: 'NFJQFS,MYIAZL'}
+      name: taxes_total_label
+      properties: {align: left, visible: true}
+      type: Label
+    - layout_properties: {grid_position: 'XWEIXS,MMXWTC LAEICC,FEJXBR'}
+      name: label_7
+      properties: {align: right, text: 'Subtotal:'}
+      type: Label
+    - layout_properties: {grid_position: 'XWEIXS,MMXWTC LAEICC,YZDQZQ'}
+      name: sub_total_label
+      properties: {align: left, visible: true}
+      type: Label
+    - layout_properties: {grid_position: 'IQWYHD,JEVEPX'}
+      name: label_8
+      properties: {text: 'Grand Total:'}
+      type: Label
     - layout_properties: {grid_position: 'QDVRUR,IIXTGG'}
       name: bill_total_label
-      properties: {align: center, visible: true}
+      properties: {align: left, visible: true}
       type: Label
     - layout_properties: {grid_position: 'JHJKFV,KVCNHA'}
       name: spacer_3
@@ -131,7 +155,7 @@ components:
       type: Button
     layout_properties: {grid_position: 'CFSXCU,SWABCD'}
     name: bill_card
-    properties: {background: 'theme:Tertiary Container', role: outlined-card, visible: false}
+    properties: {background: 'theme:Tertiary Container', col_widths: '{"YTSCAN":15,"MYIAZL":45,"FEJXBR":15,"YZDQZQ":45}', role: outlined-card, visible: false}
     type: ColumnPanel
   - layout_properties: {grid_position: 'FZIDLU,DZZPQC'}
     name: spacer_4_copy
