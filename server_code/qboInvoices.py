@@ -3,12 +3,15 @@ from . import qboUtils
 
 @anvil.server.callable
 def create_qbo_invoice(invoice_data):
-    """Create a new invoice in QBO"""
-    try:
-        return qboUtils.make_qbo_request('POST', 'invoice', data=invoice_data)
-    except Exception as e:
-        print(f"Failed to create invoice: {str(e)}")
-        raise
+  """Create a new invoice in QBO"""
+  try:
+    response = qboUtils.make_qbo_request('POST', 'invoice', data=invoice_data)
+    if 'Invoice' in response:
+      return response['Invoice']
+    raise ValueError("No invoice data in QBO response")
+  except Exception as e:
+    print(f"QBO invoice creation error: {str(e)}")
+    raise
 
 @anvil.server.callable
 def get_qbo_invoice(invoice_id):

@@ -56,7 +56,6 @@ def get_active_billing_items_for_dropdown():
     tables.order_by('name'),
     active=True
   )
-  print(f"Found {len(items)} active items")  # Debug print
   
   dropdown_items = []
   for item in items:
@@ -64,7 +63,6 @@ def get_active_billing_items_for_dropdown():
       'display': f"{item['name']} - ${item['mattsCost']//100}.{item['mattsCost']%100:02d}",
       'value': dict(item)
     }
-    print(f"Formatted item: {formatted_item['display']}")  # Debug print
     dropdown_items.append(formatted_item)
     
   return dropdown_items
@@ -166,6 +164,11 @@ def save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id=None):
     subtotal = sum(item['billing_item']['mattsCost'] * item['quantity'] for item in bill_items)
     tax_total = sum(item.get('tax_amount', 0) for item in bill_items)
     
+    # Get QBO invoice ID safely
+    invoice_id = qbo_invoice.get('Id') or qbo_invoice.get('id')
+    if not invoice_id:
+      raise ValueError("No invoice ID returned from QuickBooks")
+    
     # Create billing items
     billing_item_rows = []
     for item in bill_items:
@@ -200,10 +203,11 @@ def save_bill_to_database(bill_items, qbo_invoice, existing_invoice_id=None):
       status='pending',
       createdAt=datetime.now(),
       captureStatus=False,
-      invoiceID=qbo_invoice['Id']
+      invoiceID=invoice_id
     )
     
   except Exception as e:
-    raise ValueError(f"Database error: {str(e)}")
+    print(f"Database error detail: {str(e)}")  # More detailed error logging
+    raise ValueError(f"Failed to save bill to database: {str(e)}")
 
 # ... rest of existing billing library functions ...
