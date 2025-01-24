@@ -25,11 +25,11 @@ components:
     text: ''
   type: Button
 - components:
-  - event_bindings: {click: save_billing_item_click}
+  - event_bindings: {click: delete_billing_item_click}
     layout_properties: {col_xs: 0, row: WPLYWW, width_xs: 1}
-    name: save_billing_item
+    name: delete_billing_item
     properties:
-      icon: fa:save
+      icon: fa:remove
       spacing:
         padding: [null, '0', null, '0']
       text: ''
@@ -45,11 +45,11 @@ components:
     name: quantity_entry_box
     properties: {}
     type: TextBox
-  - event_bindings: {click: delete_billing_item_click}
+  - event_bindings: {click: save_billing_item_click}
     layout_properties: {col_xs: 11, row: WPLYWW, width_xs: 1}
-    name: delete_billing_item
+    name: save_billing_item
     properties:
-      icon: fa:remove
+      icon: fa:save
       spacing:
         padding: [null, '0', null, '0']
       text: ''
