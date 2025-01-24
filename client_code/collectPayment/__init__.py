@@ -18,6 +18,7 @@ class collectPayment(collectPaymentTemplate):
         self.bill_card.visible = False
         self.customer_table.visible = True
         self.repeating_panel_2.items = self.bill_items
+        self.update_totals()  # Initialize totals
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -181,6 +182,7 @@ class collectPayment(collectPaymentTemplate):
         # Clear any existing bill items when selecting new customer
         self.bill_items = []
         self.bill_items_list.items = self.bill_items
+        self.update_totals()  # Reset totals for new customer
         
     def re_select_customer_button_click(self, **event_args):
         """Handle customer reselection"""
@@ -235,6 +237,7 @@ class collectPayment(collectPaymentTemplate):
                     component.update_display()
         
         print("Bill items refreshed")
+        self.update_totals()  # Update totals after adding item
 
     def show_add_button(self):
         """Helper to show add and proceed buttons after save/delete"""
@@ -246,6 +249,7 @@ class collectPayment(collectPaymentTemplate):
         if item in self.bill_items:
             self.bill_items.remove(item)
             self.repeating_panel_2.items = self.bill_items
+            self.update_totals()  # Update totals after removing item
 
     def calculate_bill_totals(self):
         """Calculate subtotal, tax total and grand total for all items"""
@@ -298,3 +302,23 @@ class collectPayment(collectPaymentTemplate):
         except Exception as e:
             print(f"Error processing bill: {str(e)}")  # Add logging
             alert(f"Failed to process bill: {str(e)}")
+            
+    def update_totals(self):
+        """Update all total labels"""
+        subtotal = 0
+        tax_total = 0
+        
+        for item in self.bill_items:
+            if 'billing_item' not in item:
+                continue
+            quantity = item.get('quantity', 1)
+            cost = item['billing_item']['mattsCost']
+            subtotal += cost * quantity
+            tax_total += item.get('tax_amount', 0)
+            
+        grand_total = subtotal + tax_total
+        
+        # Update labels with formatted amounts
+        self.sub_total_label.text = f"${subtotal//100}.{subtotal%100:02d}"
+        self.taxes_total_label.text = f"${tax_total//100}.{tax_total%100:02d}"
+        self.bill_total_label.text = f"${grand_total//100}.{grand_total%100:02d}"

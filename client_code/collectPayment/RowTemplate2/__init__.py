@@ -129,12 +129,14 @@ class RowTemplate2(RowTemplate2Template):
       quantity = int(self.quantity_entry_box.text or 1)
       if quantity < 1:
         self.quantity_entry_box.text = "1"
-      self.item['quantity'] = quantity  # Store quantity in item data
-      self.update_display()  # Refresh tax and total
+      self.item['quantity'] = quantity
+      self.update_display()  # Refresh item display
+      get_open_form().update_totals()  # Update form totals
     except ValueError:
       self.quantity_entry_box.text = "1"
       self.item['quantity'] = 1
       self.update_display()
+      get_open_form().update_totals()
 
   def save_billing_item_click(self, **event_args):
     if not self.add_item_selector_dropdown.selected_value:
@@ -171,6 +173,7 @@ class RowTemplate2(RowTemplate2Template):
     
     self.update_display()
     get_open_form().show_add_button()
+    get_open_form().update_totals()  # Update form totals after saving item
 
   def delete_billing_item_click(self, **event_args):
     """Remove this row"""
