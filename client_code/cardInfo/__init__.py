@@ -16,10 +16,6 @@ class cardInfo(cardInfoTemplate):
     self.customer = customer
     self.card_number_hidden = True
     
-    # Initialize button states
-    self.show_card_number_button.visible = True
-    self.hide_card_number_button.visible = False
-    
     # Set up form with passed data
     if customer:
       self.customer_name_label.text = f"{customer['firstName']} {customer['lastName']}"
@@ -115,17 +111,19 @@ class cardInfo(cardInfoTemplate):
   def show_card_number_click(self, **event_args):
     """Show full card number"""
     self.card_number_hidden = False
-    self.show_card_number_button.visible = False
-    self.hide_card_number_button.visible = True
-    # Reformat displayed card number
+    if hasattr(self, 'show_card_number'):  # Use actual button name
+        self.show_card_number.visible = False
+    if hasattr(self, 'hide_card_number'):  # Use actual button name
+        self.hide_card_number.visible = True
     self.card_number_input_change()
 
   def hide_card_number_click(self, **event_args):
     """Hide card number"""
     self.card_number_hidden = True
-    self.show_card_number_button.visible = True
-    self.hide_card_number_button.visible = False
-    # Reformat displayed card number
+    if hasattr(self, 'show_card_number'):  # Use actual button name
+        self.show_card_number.visible = True
+    if hasattr(self, 'hide_card_number'):  # Use actual button name
+        self.hide_card_number.visible = False
     self.card_number_input_change()
 
   def process_payment_click(self, **event_args):
