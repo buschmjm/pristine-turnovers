@@ -20,7 +20,9 @@ class collectPayment(collectPaymentTemplate):
         self.repeating_panel_2.items = self.bill_items
         # Hide payment buttons and totals initially
         self.proceed_payment_card_button.visible = False
-        self.totals_panel.visible = False
+        self.bill_total_label.visible = False
+        self.sub_total_label.visible = False
+        self.taxes_total_label.visible = False
         self.update_totals()  # Initialize totals
             
     def load_customers(self):
@@ -245,19 +247,22 @@ class collectPayment(collectPaymentTemplate):
     def show_add_button(self):
         """Helper to show add and proceed buttons after save/delete"""
         self.add_bill_item_button.visible = True
-        # Only show proceed button if there are items
+        # Only show proceed button and totals if there are items
         has_items = any(item and 'billing_item' in item for item in self.bill_items)
         self.proceed_payment_card_button.visible = has_items
-        self.totals_panel.visible = has_items
+        self.bill_total_label.visible = has_items
+        self.sub_total_label.visible = has_items
+        self.taxes_total_label.visible = has_items
 
     def remove_bill_item(self, item):
-        """Remove an item from the bill items list"""
         if item in self.bill_items:
             self.bill_items.remove(item)
             self.repeating_panel_2.items = self.bill_items
             # Check if we should hide totals after remove
             has_items = len(self.bill_items) > 0
-            self.totals_panel.visible = has_items
+            self.bill_total_label.visible = has_items
+            self.sub_total_label.visible = has_items
+            self.taxes_total_label.visible = has_items
             self.proceed_payment_card_button.visible = has_items
             self.update_totals()
 
@@ -336,7 +341,9 @@ class collectPayment(collectPaymentTemplate):
         try:
             # Check if we should show totals
             has_items = any(item and 'billing_item' in item for item in self.bill_items)
-            self.totals_panel.visible = has_items
+            self.bill_total_label.visible = has_items
+            self.sub_total_label.visible = has_items
+            self.taxes_total_label.visible = has_items
             self.proceed_payment_card_button.visible = has_items
 
             if not has_items:
