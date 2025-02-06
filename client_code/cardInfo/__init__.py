@@ -22,6 +22,12 @@ class cardInfo(cardInfoTemplate):
     if amount:
       formatted_amount = f"${amount//100}.{amount%100:02d}"
       self.process_payment_button.text = f"Process Payment of {formatted_amount}"
+      
+    # Set up input restrictions
+    self.card_number_input.tag = {'prev_value': ''}
+    self.expiry_date_input.tag = {'prev_value': ''}
+    self.cvv_input.tag = {'prev_value': ''}
+    self.zip_input.tag = {'prev_value': ''}
 
   def format_card_number(self, card_number):
     """Format card number with spaces and handle masking"""
@@ -53,25 +59,47 @@ class cardInfo(cardInfoTemplate):
                           if re.match(pattern, cleaned)), None)
     return is_valid
 
+  def card_number_input_pressed_key(self, sender, key, **event_args):
+    """Prevent non-numeric input in card number"""
+    # Only allow numbers and control keys
+    return key.lower() in '0123456789\b\r'
+
   def card_number_input_change(self, **event_args):
     """Handle card number input formatting and validation"""
     current = self.card_number_input.text
-    cleaned = re.sub(r'\D', '', current)
+    # Only allow digits
+    cleaned = ''.join(c for c in current if c.isdigit())
+    
+    if current != cleaned and cleaned != self.card_number_input.tag['prev_value']:
+      # Restore previous valid value if invalid characters were entered
+      self.card_number_input.text = self.card_number_input.tag['prev_value']
+      return
     
     if self.is_valid_card_number(cleaned):
-      self.card_number_input.background = '#f0fff0'  # Light green for valid
-      self.card_number_input.text = self.format_card_number(cleaned)
-      # Update CVC max length based on card type
+      self.card_number_input.background = '#f0fff0'
+      formatted = self.format_card_number(cleaned)
+      self.card_number_input.text = formatted
+      self.card_number_input.tag['prev_value'] = formatted
       self.cvv_input.maximum_length = 4 if self.card_type == 'Amex' else 3
     else:
-      self.card_number_input.background = '#fff0f0'  # Light red for invalid
-      self.card_number_input.text = self.format_card_number(cleaned)
+      self.card_number_input.background = '#fff0f0'
+      formatted = self.format_card_number(cleaned)
+      self.card_number_input.text = formatted
+      self.card_number_input.tag['prev_value'] = formatted
+
+  def expiry_date_input_pressed_key(self, sender, key, **event_args):
+    """Prevent non-numeric input in expiry date"""
+    return key.lower() in '0123456789\b\r'
 
   def expiry_date_input_change(self, **event_args):
     """Format expiry date as MM/YY"""
     current = self.expiry_date_input.text
-    cleaned = re.sub(r'\D', '', current)
+    cleaned = ''.join(c for c in current if c.isdigit())
     
+    if current != cleaned and cleaned != self.expiry_date_input.tag['prev_value']:
+      self.expiry_date_input.text = self.expiry_date_input.tag['prev_value']
+      return
+      
     if len(cleaned) > 4:
       cleaned = cleaned[:4]
     
@@ -84,29 +112,64 @@ class cardInfo(cardInfoTemplate):
       formatted = cleaned
       
     self.expiry_date_input.text = formatted
+    self.expiry_date_input.tag['prev_value'] = formatted
+    # Validate expiration date
+    if len(cleaned) == 4:
+      month, year = int(cleaned[:2]), int(cleaned[2:])
+      now = datetime.now()
+      exp_date = datetime(2000 + year, month, 1)
+      self.expiry_date_input.background = '#f0fff0' if exp_date > now else '#fff0f0'
+    else:
+      self.expiry_date_input.background = '#fff0f0'
+
+  def cvv_input_pressed_key(self, sender, key, **event_args):
+    """Prevent non-numeric input in CVV"""
+    return key.lower() in '0123456789\b\r'
 
   def cvv_input_change(self, **event_args):
     """Validate CVV/CVC based on card type"""
     current = self.cvv_input.text
-    cleaned = re.sub(r'\D', '', current)
-    max_length = 4 if hasattr(self, 'card_type') and self.card_type == 'Amex' else 3
+    cleaned = ''.join(c for c in current if c.isdigit())
     
+    if current != cleaned and cleaned != self.cvv_input.tag['prev_value']:
+      self.cvv_input.text = self.cvv_input.tag['prev_value']
+      return
+      
+    max_length = 4 if hasattr(self, 'card_type') and self.card_type == 'Amex' else 3
     if len(cleaned) > max_length:
       cleaned = cleaned[:max_length]
     
     self.cvv_input.text = cleaned
+    self.cvv_input.tag['prev_value'] = cleaned
     self.cvv_input.background = '#f0fff0' if len(cleaned) == max_length else '#fff0f0'
+
+  def zip_input_pressed_key(self, sender, key, **event_args):
+    """Prevent non-numeric input in ZIP"""
+    return key.lower() in '0123456789\b\r'
 
   def zip_input_change(self, **event_args):
     """Validate and format ZIP code"""
     current = self.zip_input.text
-    cleaned = re.sub(r'\D', '', current)
+    cleaned = ''.join(c for c in current if c.isdigit())
     
+    if current != cleaned and cleaned != self.zip_input.tag['prev_value']:
+      self.zip_input.text = self.zip_input.tag['prev_value']
+      return
+      
     if len(cleaned) > 5:
       cleaned = cleaned[:5]
       
     self.zip_input.text = cleaned
+    self.zip_input.tag['prev_value'] = cleaned
     self.zip_input.background = '#f0fff0' if len(cleaned) == 5 else '#fff0f0'
+
+  def name_on_card_input_change(self, **event_args):
+    """Validate name input"""
+    current = self.name_on_card_input.text
+    # Allow only letters, spaces, and common punctuation
+    cleaned = ''.join(c for c in current if c.isalpha() or c.isspace() or c in "'-.")
+    if current != cleaned:
+      self.name_on_card_input.text = cleaned
 
   def show_card_number_click(self, **event_args):
     """Show full card number"""
