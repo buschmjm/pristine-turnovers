@@ -20,7 +20,7 @@ class cardInfo(cardInfoTemplate):
     if amount:
       self.amount_label.text = f"${amount//100}.{amount%100:02d}"
 
-  def process_payment_click(self, **event_args):
+  def process_payment_button_click(self, **event_args):
     """Handle payment processing"""
     try:
       # Validate card info (add your validation logic here)

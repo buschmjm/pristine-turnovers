@@ -37,16 +37,19 @@ components:
       name: zip_label
       properties: {}
       type: TextBox
-    - event_bindings: {click: process_payment_click}
+    - data_bindings: []
+      event_bindings: {click: process_payment_button_click}
       layout_properties: {grid_position: 'SNGSSZ,EPFBSI'}
-      name: process_payment
+      name: process_payment_button
       properties:
+        background: theme:Disabled Container
         font_size: 16
+        foreground: theme:On Disabled
         role: filled-button
         spacing:
           margin: ['20', null, '20', null]
           padding: ['10', '24', '10', '24']
-        text: Process Payment
+        text: Process Payment..
       type: Button
     layout_properties: {grid_position: 'HXHMHU,VWWMJZ'}
     name: outlined_card_1
