@@ -9,10 +9,26 @@ components:
       name: label_2
       properties: {text: Name}
       type: Label
-    - layout_properties: {grid_position: 'BWQYVQ,DUIBWS'}
+    - layout_properties: {grid_position: 'BWQYVQ,DUIBWS GVQCGE,KSJOWI'}
       name: customer_name_label
       properties: {}
       type: TextBox
+    - layout_properties: {grid_position: 'BWQYVQ,DUIBWS FXBAKN,VHKHQR'}
+      name: label_2_copy
+      properties: {text: Card Number}
+      type: Label
+    - layout_properties: {grid_position: 'BWQYVQ,DUIBWS LWJZHR,MZGRLG'}
+      name: card_number_label
+      properties: {}
+      type: TextBox
+    - layout_properties: {grid_position: 'BWQYVQ,QPVIOS EDBHBV,PUHIQC'}
+      name: show_card_number
+      properties: {icon: 'fa:eye', text: ''}
+      type: Button
+    - layout_properties: {grid_position: 'BWQYVQ,QPVIOS ULNFBK,HRMROX'}
+      name: hide_card_number
+      properties: {icon: 'fa:eye-slash', text: '', visible: false}
+      type: Button
     - layout_properties: {grid_position: 'KXLZGD,UBDOAE UJXWTW,TJUTGL'}
       name: label_3
       properties: {text: CVC}
@@ -53,7 +69,7 @@ components:
       type: Button
     layout_properties: {grid_position: 'HXHMHU,VWWMJZ'}
     name: outlined_card_1
-    properties: {role: outlined-card}
+    properties: {col_widths: '{"DUIBWS":73,"QPVIOS":5}', role: outlined-card}
     type: ColumnPanel
   layout_properties: {slot: default}
   name: content_panel
