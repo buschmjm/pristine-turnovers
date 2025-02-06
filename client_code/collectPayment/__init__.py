@@ -18,6 +18,9 @@ class collectPayment(collectPaymentTemplate):
         self.bill_card.visible = False
         self.customer_table.visible = True
         self.repeating_panel_2.items = self.bill_items
+        # Hide payment buttons and totals initially
+        self.proceed_payment_card_button.visible = False
+        self.totals_panel.visible = False
         self.update_totals()  # Initialize totals
             
     def load_customers(self):
@@ -242,14 +245,21 @@ class collectPayment(collectPaymentTemplate):
     def show_add_button(self):
         """Helper to show add and proceed buttons after save/delete"""
         self.add_bill_item_button.visible = True
-        self.proceed_payment_card_button.visible = True
+        # Only show proceed button if there are items
+        has_items = any(item and 'billing_item' in item for item in self.bill_items)
+        self.proceed_payment_card_button.visible = has_items
+        self.totals_panel.visible = has_items
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
         if item in self.bill_items:
             self.bill_items.remove(item)
             self.repeating_panel_2.items = self.bill_items
-            self.update_totals()  # Update totals after removing item
+            # Check if we should hide totals after remove
+            has_items = len(self.bill_items) > 0
+            self.totals_panel.visible = has_items
+            self.proceed_payment_card_button.visible = has_items
+            self.update_totals()
 
     def calculate_bill_totals(self):
         """Calculate subtotal, tax total and grand total for all items"""
@@ -324,6 +334,14 @@ class collectPayment(collectPaymentTemplate):
     def update_totals(self):
         """Update all total labels"""
         try:
+            # Check if we should show totals
+            has_items = any(item and 'billing_item' in item for item in self.bill_items)
+            self.totals_panel.visible = has_items
+            self.proceed_payment_card_button.visible = has_items
+
+            if not has_items:
+                return
+
             subtotal = 0
             tax_total = 0
             
