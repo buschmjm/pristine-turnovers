@@ -17,6 +17,9 @@ class RowTemplate2(RowTemplate2Template):
 
   def setup_initial_state(self):
     """Set up initial component visibility for new rows"""
+    # Mark item as being edited
+    if isinstance(self.item, dict):
+      self.item['is_editing'] = True
     # Show edit panel with dropdown and quantity box
     self.edit_item_panel.visible = True
     
@@ -87,6 +90,8 @@ class RowTemplate2(RowTemplate2Template):
 
   def edit_billing_item_click(self, **event_args):
     """Re-open edit panel when edit button is clicked"""
+    # Mark item as being edited again
+    self.item['is_editing'] = True
     # Show edit panel, hide display components
     self.edit_item_panel.visible = True
     self.billing_item_name_label.visible = False
@@ -143,11 +148,11 @@ class RowTemplate2(RowTemplate2Template):
       alert("Please select an item.")
       return
     
-    # Get the selected item data
+    # Get the selected item data and update
     selected_item = self.add_item_selector_dropdown.selected_value
     quantity = int(self.quantity_entry_box.text or 1)
     
-    # Calculate tax
+    # Calculate tax and update item
     subtotal = selected_item['mattsCost'] * quantity
     if selected_item['taxable']:
       tax_rate = anvil.server.call('get_tax_rate')
@@ -155,11 +160,12 @@ class RowTemplate2(RowTemplate2Template):
     else:
       tax_amount = 0
     
-    # Update item data
+    # Update item data and mark as not editing
     self.item.update({
       'billing_item': selected_item,
       'quantity': quantity,
-      'tax_amount': tax_amount
+      'tax_amount': tax_amount,
+      'is_editing': False  # Mark as saved/completed
     })
     
     # Switch visibility

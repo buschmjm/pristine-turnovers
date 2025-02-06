@@ -20,10 +20,14 @@ class collectPayment(collectPaymentTemplate):
         self.repeating_panel_2.items = self.bill_items
         # Hide payment buttons and totals initially
         self.proceed_payment_card_button.visible = False
+        self.hide_totals()
+
+    def hide_totals(self):
+        """Helper to hide all total-related elements"""
         self.bill_total_label.visible = False
         self.sub_total_label.visible = False
         self.taxes_total_label.visible = False
-        self.update_totals()  # Initialize totals
+        self.totals_label.visible = False  # Hide the "Totals" header if you have one
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -247,23 +251,30 @@ class collectPayment(collectPaymentTemplate):
     def show_add_button(self):
         """Helper to show add and proceed buttons after save/delete"""
         self.add_bill_item_button.visible = True
-        # Only show proceed button and totals if there are items
-        has_items = any(item and 'billing_item' in item for item in self.bill_items)
-        self.proceed_payment_card_button.visible = has_items
-        self.bill_total_label.visible = has_items
-        self.sub_total_label.visible = has_items
-        self.taxes_total_label.visible = has_items
+        # Only show proceed button and totals if there are completed items
+        has_completed_items = any(
+            item and 'billing_item' in item and not item.get('is_editing', True)
+            for item in self.bill_items
+        )
+        self.proceed_payment_card_button.visible = has_completed_items
+        self.bill_total_label.visible = has_completed_items
+        self.sub_total_label.visible = has_completed_items
+        self.taxes_total_label.visible = has_completed_items
+        self.totals_label.visible = has_completed_items  # Show the "Totals" header if you have one
 
     def remove_bill_item(self, item):
+        """Remove an item from the bill items list"""
         if item in self.bill_items:
             self.bill_items.remove(item)
             self.repeating_panel_2.items = self.bill_items
-            # Check if we should hide totals after remove
-            has_items = len(self.bill_items) > 0
-            self.bill_total_label.visible = has_items
-            self.sub_total_label.visible = has_items
-            self.taxes_total_label.visible = has_items
-            self.proceed_payment_card_button.visible = has_items
+            # Check if we still have any completed items
+            has_completed_items = any(
+                item and 'billing_item' in item and not item.get('is_editing', True)
+                for item in self.bill_items
+            )
+            if not has_completed_items:
+                self.hide_totals()
+                self.proceed_payment_card_button.visible = False
             self.update_totals()
 
     def calculate_bill_totals(self):

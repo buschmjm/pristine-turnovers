@@ -18,9 +18,15 @@ class cardInfo(cardInfoTemplate):
     if customer:
       self.customer_name_label.text = f"{customer['firstName']} {customer['lastName']}"
     if amount:
-      self.amount_label.text = f"${amount//100}.{amount%100:02d}"
+      # Update button text to include amount instead of using separate label
+      formatted_amount = f"${amount//100}.{amount%100:02d}"
+      self.process_payment_button.text = f"Process Payment of {formatted_amount}"
+      
+      # Hide amount label if you want to remove it completely
+      if hasattr(self, 'amount_label'):
+        self.amount_label.visible = False
 
-  def process_payment_button_click(self, **event_args):
+  def process_payment_click(self, **event_args):
     """Handle payment processing"""
     try:
       # Validate card info (add your validation logic here)
