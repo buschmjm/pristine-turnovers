@@ -50,3 +50,11 @@ class cardInfo(cardInfoTemplate):
     """Handle cancel button click"""
     if confirm("Are you sure you want to cancel? The invoice has already been created."):
       open_form('landingPage')
+
+  def hide_card_number_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass
+
+  def show_card_number_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass

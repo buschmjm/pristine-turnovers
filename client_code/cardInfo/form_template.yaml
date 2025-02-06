@@ -21,11 +21,13 @@ components:
       name: card_number_label
       properties: {}
       type: TextBox
-    - layout_properties: {grid_position: 'BWQYVQ,QPVIOS EDBHBV,PUHIQC'}
+    - event_bindings: {click: show_card_number_click}
+      layout_properties: {grid_position: 'BWQYVQ,QPVIOS EDBHBV,PUHIQC'}
       name: show_card_number
       properties: {icon: 'fa:eye', text: ''}
       type: Button
-    - layout_properties: {grid_position: 'BWQYVQ,QPVIOS ULNFBK,HRMROX'}
+    - event_bindings: {click: hide_card_number_click}
+      layout_properties: {grid_position: 'BWQYVQ,QPVIOS ULNFBK,HRMROX'}
       name: hide_card_number
       properties: {icon: 'fa:eye-slash', text: '', visible: false}
       type: Button
