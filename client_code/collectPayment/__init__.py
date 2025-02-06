@@ -27,7 +27,6 @@ class collectPayment(collectPaymentTemplate):
         self.bill_total_label.visible = False
         self.sub_total_label.visible = False
         self.taxes_total_label.visible = False
-        self.totals_label.visible = False  # Hide the "Totals" header if you have one
             
     def load_customers(self):
         """Load all customers into the repeating panel"""
@@ -260,7 +259,6 @@ class collectPayment(collectPaymentTemplate):
         self.bill_total_label.visible = has_completed_items
         self.sub_total_label.visible = has_completed_items
         self.taxes_total_label.visible = has_completed_items
-        self.totals_label.visible = has_completed_items  # Show the "Totals" header if you have one
 
     def remove_bill_item(self, item):
         """Remove an item from the bill items list"""
