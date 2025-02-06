@@ -10,7 +10,7 @@ components:
       properties: {text: Name}
       type: Label
     - layout_properties: {grid_position: 'BWQYVQ,DUIBWS'}
-      name: name_input
+      name: customer_name_label
       properties: {}
       type: TextBox
     - layout_properties: {grid_position: 'KXLZGD,UBDOAE UJXWTW,TJUTGL'}
@@ -22,11 +22,11 @@ components:
       properties: {text: Expiration}
       type: Label
     - layout_properties: {grid_position: 'KXLZGD,SPKLHJ JILCKK,ZYUJAT'}
-      name: expiration_input
+      name: expiration_label
       properties: {placeholder: mm/yy}
       type: TextBox
     - layout_properties: {grid_position: 'KXLZGD,UBDOAE OWDDWE,VEFCRA'}
-      name: cvc_input
+      name: cvc_label
       properties: {placeholder: ''}
       type: TextBox
     - layout_properties: {grid_position: 'KXLZGD,UBDOAE KGKZLX,DKGVTK'}
@@ -34,7 +34,7 @@ components:
       properties: {text: Billing Zip}
       type: Label
     - layout_properties: {grid_position: 'KXLZGD,UBDOAE RQMFLY,DZRVFS'}
-      name: zip_input
+      name: zip_label
       properties: {}
       type: TextBox
     - event_bindings: {click: process_payment_click}
