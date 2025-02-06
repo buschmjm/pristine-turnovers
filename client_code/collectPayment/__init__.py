@@ -307,7 +307,7 @@ class collectPayment(collectPaymentTemplate):
                 # Open card info form with invoice details
                 open_form('cardInfo', 
                     invoice_id=self.existing_invoice_id,
-                    amount=result['bill']['grand_total'],
+                    amount=result['bill']['grandTotal'],  # Changed from grand_total to grandTotal
                     customer=self.selected_customer
                 )
             elif payment_choice == "Send as Invoice":
