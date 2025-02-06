@@ -285,10 +285,7 @@ class collectPayment(collectPaymentTemplate):
             if not confirm(f"This will {action} an invoice in QuickBooks Online. Continue?"):
                 return
                 
-            # Add debug print
-            print(f"Selected customer: {self.selected_customer}")
-            print(f"Bill items: {self.bill_items}")
-            
+            # Create invoice in QBO
             result = anvil.server.call(
                 'create_bill_with_items',
                 self.bill_items,
@@ -297,10 +294,31 @@ class collectPayment(collectPaymentTemplate):
             )
             
             self.existing_invoice_id = result['qbo_invoice']['Id']
-            alert(f"Invoice {result['qbo_invoice']['Id']} processed successfully!")
+            
+            # Ask user for payment method
+            payment_choice = alert(
+                message="How would you like to process this invoice?",
+                title="Payment Method",
+                buttons=["Record Credit/Debit Card", "Send as Invoice", "Cancel"],
+                large=True
+            )
+            
+            if payment_choice == "Record Credit/Debit Card":
+                # Open card info form with invoice details
+                open_form('cardInfo', 
+                    invoice_id=self.existing_invoice_id,
+                    amount=result['bill']['grand_total'],
+                    customer=self.selected_customer
+                )
+            elif payment_choice == "Send as Invoice":
+                # For now, just show success message
+                alert(f"Invoice {result['qbo_invoice']['Id']} will be sent to customer.")
+            else:
+                # User clicked Cancel
+                alert("Invoice created but no payment method selected.")
             
         except Exception as e:
-            print(f"Error processing bill: {str(e)}")  # Add logging
+            print(f"Error processing bill: {str(e)}")
             alert(f"Failed to process bill: {str(e)}")
             
     def update_totals(self):
