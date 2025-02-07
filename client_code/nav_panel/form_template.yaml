@@ -6,6 +6,18 @@ components:
     type: Spacer
   - event_bindings: {click: collect_payment_button_click}
     layout_properties: {}
+    name: existing_bills_button
+    properties:
+      bold: false
+      font_size: 20
+      foreground: ''
+      spacing:
+        margin: ['10', null, '10', null]
+        padding: ['15', '45', '15', '45']
+      text: Existing Bills
+    type: Button
+  - event_bindings: {click: collect_payment_button_click}
+    layout_properties: {}
     name: collect_payment_button
     properties:
       bold: false
