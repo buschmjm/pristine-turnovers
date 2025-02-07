@@ -63,111 +63,17 @@ class cardInfo(cardInfoTemplate):
     """Prevent non-numeric input in card number"""
     return key.lower() in '0123456789\b\r'
 
-  def card_number_label_change(self, **event_args):
-    """Handle card number input formatting and validation"""
-    current = self.card_number_label.text
-    # Only allow digits
-    cleaned = ''.join(c for c in current if c.isdigit())
-    
-    if current != cleaned and cleaned != self.card_number_label.tag['prev_value']:
-      self.card_number_label.text = self.card_number_label.tag['prev_value']
-      return
-    
-    if self.is_valid_card_number(cleaned):
-      self.card_number_label.background = '#f0fff0'
-      formatted = self.format_card_number(cleaned)
-      self.card_number_label.text = formatted
-      self.card_number_label.tag['prev_value'] = formatted
-      self.cvc_label.maximum_length = 4 if self.card_type == 'Amex' else 3
-    else:
-      self.card_number_label.background = '#fff0f0'
-      formatted = self.format_card_number(cleaned)
-      self.card_number_label.text = formatted
-      self.card_number_label.tag['prev_value'] = formatted
-
   def expiration_label_pressed_key(self, sender, key, **event_args):
     """Prevent non-numeric input in expiry date"""
     return key.lower() in '0123456789\b\r'
-
-  def expiration_label_change(self, **event_args):
-    """Format expiry date as MM/YY"""
-    current = self.expiration_label.text
-    cleaned = ''.join(c for c in current if c.isdigit())
-    
-    if current != cleaned and cleaned != self.expiration_label.tag['prev_value']:
-      self.expiration_label.text = self.expiration_label.tag['prev_value']
-      return
-      
-    if len(cleaned) > 4:
-      cleaned = cleaned[:4]
-    
-    if len(cleaned) >= 2:
-      month = int(cleaned[:2])
-      if month > 12:
-        cleaned = '12' + cleaned[2:]
-      formatted = f"{cleaned[:2]}/{cleaned[2:]}"
-    else:
-      formatted = cleaned
-      
-    self.expiration_label.text = formatted
-    self.expiration_label.tag['prev_value'] = formatted
-    # Validate expiration date
-    if len(cleaned) == 4:
-      month, year = int(cleaned[:2]), int(cleaned[2:])
-      now = datetime.now()
-      exp_date = datetime(2000 + year, month, 1)
-      self.expiration_label.background = '#f0fff0' if exp_date > now else '#fff0f0'
-    else:
-      self.expiration_label.background = '#fff0f0'
 
   def cvc_label_pressed_key(self, sender, key, **event_args):
     """Prevent non-numeric input in CVV"""
     return key.lower() in '0123456789\b\r'
 
-  def cvc_label_change(self, **event_args):
-    """Validate CVV/CVC based on card type"""
-    current = self.cvc_label.text
-    cleaned = ''.join(c for c in current if c.isdigit())
-    
-    if current != cleaned and cleaned != self.cvc_label.tag['prev_value']:
-      self.cvc_label.text = self.cvc_label.tag['prev_value']
-      return
-      
-    max_length = 4 if hasattr(self, 'card_type') and self.card_type == 'Amex' else 3
-    if len(cleaned) > max_length:
-      cleaned = cleaned[:max_length]
-    
-    self.cvc_label.text = cleaned
-    self.cvc_label.tag['prev_value'] = cleaned
-    self.cvc_label.background = '#f0fff0' if len(cleaned) == max_length else '#fff0f0'
-
   def zip_label_pressed_key(self, sender, key, **event_args):
     """Prevent non-numeric input in ZIP"""
     return key.lower() in '0123456789\b\r'
-
-  def zip_label_change(self, **event_args):
-    """Validate and format ZIP code"""
-    current = self.zip_label.text
-    cleaned = ''.join(c for c in current if c.isdigit())
-    
-    if current != cleaned and cleaned != self.zip_label.tag['prev_value']:
-      self.zip_label.text = self.zip_label.tag['prev_value']
-      return
-      
-    if len(cleaned) > 5:
-      cleaned = cleaned[:5]
-      
-    self.zip_label.text = cleaned
-    self.zip_label.tag['prev_value'] = cleaned
-    self.zip_label.background = '#f0fff0' if len(cleaned) == 5 else '#fff0f0'
-
-  def name_on_card_text_box_change(self, **event_args):
-    """Validate name input"""
-    current = self.name_on_card_text_box.text
-    # Allow only letters, spaces, and common punctuation
-    cleaned = ''.join(c for c in current if c.isalpha() or c.isspace() or c in "'-.")
-    if current != cleaned:
-      self.name_on_card_text_box.text = cleaned
 
   def show_card_number_click(self, **event_args):
     """Show full card number"""
@@ -176,7 +82,7 @@ class cardInfo(cardInfoTemplate):
         self.show_card_number.visible = False
     if hasattr(self, 'hide_card_number'):
         self.hide_card_number.visible = True
-    self.card_number_label_change()
+    self.card_number_label_lost_focus()
 
   def hide_card_number_click(self, **event_args):
     """Hide card number"""
@@ -185,43 +91,100 @@ class cardInfo(cardInfoTemplate):
         self.show_card_number.visible = True
     if hasattr(self, 'hide_card_number'):
         self.hide_card_number.visible = False
-    self.card_number_label_change()
+    self.card_number_label_lost_focus()
+
+  def validate_card_number(self):
+    """Validate card number and return True if valid"""
+    if not self.is_valid_card_number(self.card_number_label.text):
+      self.card_number_label.background = '#fff0f0'  # Light red
+      alert("Please enter a valid card number")
+      self.card_number_label.focus()
+      return False
+    return True
+
+  def validate_expiration(self):
+    """Validate expiration date and return True if valid"""
+    cleaned = re.sub(r'\D', '', self.expiration_label.text)
+    if len(cleaned) != 4:
+      self.expiration_label.background = '#fff0f0'
+      alert("Please enter a valid expiration date (MM/YY)")
+      self.expiration_label.focus()
+      return False
+    
+    month, year = int(cleaned[:2]), int(cleaned[2:])
+    exp_date = datetime(2000 + year, month, 1)
+    if exp_date <= datetime.now():
+      self.expiration_label.background = '#fff0f0'
+      alert("Card has expired")
+      self.expiration_label.focus()
+      return False
+    return True
+
+  def validate_cvc(self):
+    """Validate CVC and return True if valid"""
+    cleaned = self.cvc_label.text
+    required_length = 4 if hasattr(self, 'card_type') and self.card_type == 'Amex' else 3
+    if len(cleaned) != required_length:
+      self.cvc_label.background = '#fff0f0'
+      alert(f"Please enter a valid {required_length}-digit security code")
+      self.cvc_label.focus()
+      return False
+    return True
+
+  def validate_zip(self):
+    """Validate ZIP code and return True if valid"""
+    if len(self.zip_label.text) != 5:
+      self.zip_label.background = '#fff0f0'
+      alert("Please enter a valid 5-digit ZIP code")
+      self.zip_label.focus()
+      return False
+    return True
+
+  def validate_name(self):
+    """Validate card holder name and return True if valid"""
+    cleaned = self.name_on_card_label.text.strip()
+    if len(cleaned) < 2 or not any(c.isalpha() for c in cleaned):
+      self.name_on_card_label.background = '#fff0f0'
+      alert("Please enter a valid name")
+      self.name_on_card_label.focus()
+      return False
+    return True
+
+  # Add lost_focus event handlers
+  def card_number_label_lost_focus(self, **event_args):
+    """Validate card number when focus is lost"""
+    self.validate_card_number()
+
+  def expiration_label_lost_focus(self, **event_args):
+    """Validate expiration when focus is lost"""
+    self.validate_expiration()
+
+  def cvc_label_lost_focus(self, **event_args):
+    """Validate CVC when focus is lost"""
+    self.validate_cvc()
+
+  def zip_label_lost_focus(self, **event_args):
+    """Validate ZIP when focus is lost"""
+    self.validate_zip()
+
+  def name_on_card_label_lost_focus(self, **event_args):
+    """Validate name when focus is lost"""
+    self.validate_name()
 
   def process_payment_click(self, **event_args):
     """Validate all fields before processing"""
-    if not all([
-      self.is_valid_card_number(self.card_number_label.text),
-      len(re.sub(r'\D', '', self.expiration_label.text)) == 4,
-      len(self.cvc_label.text) in [3, 4],
-      len(self.zip_label.text) == 5,
-      self.name_on_card_label.text
-    ]):
-      alert("Please fill in all fields correctly")
+    # Validate all fields in sequence
+    if not (self.validate_card_number() and 
+            self.validate_expiration() and 
+            self.validate_cvc() and 
+            self.validate_zip() and 
+            self.validate_name()):
       return
       
-    # ... rest of payment processing code ...
+    # Continue with payment processing
+    # ...existing payment processing code...
 
   def cancel_button_click(self, **event_args):
     """Handle cancel button click"""
     if confirm("Are you sure you want to cancel? The invoice has already been created."):
       open_form('landingPage')
-
-  def card_number_label_pressed_enter(self, **event_args):
-    """This method is called when the user presses Enter in this text box"""
-    pass
-
-  def card_number_label_lost_focus(self, **event_args):
-    """This method is called when the TextBox loses focus"""
-    pass
-
-  def cvc_label_lost_focus(self, **event_args):
-    """This method is called when the TextBox loses focus"""
-    pass
-
-  def expiration_label_lost_focus(self, **event_args):
-    """This method is called when the TextBox loses focus"""
-    pass
-
-  def zip_label_lost_focus(self, **event_args):
-    """This method is called when the TextBox loses focus"""
-    pass
