@@ -98,17 +98,15 @@ class cardInfo(cardInfoTemplate):
     if not self.is_valid_card_number(self.card_number_label.text):
       self.card_number_label.background = '#fff0f0'  # Light red
       alert("Please enter a valid card number")
-      self.card_number_label.focus()
       return False
     return True
 
   def validate_expiration(self):
     """Validate expiration date and return True if valid"""
     cleaned = re.sub(r'\D', '', self.expiration_label.text)
-    if len(cleaned) != 4:
+    if not cleaned.isdigit() or len(cleaned) != 4:
       self.expiration_label.background = '#fff0f0'
       alert("Please enter a valid expiration date (MM/YY)")
-      self.expiration_label.focus()
       return False
     
     month, year = int(cleaned[:2]), int(cleaned[2:])
@@ -116,27 +114,28 @@ class cardInfo(cardInfoTemplate):
     if exp_date <= datetime.now():
       self.expiration_label.background = '#fff0f0'
       alert("Card has expired")
-      self.expiration_label.focus()
       return False
     return True
 
   def validate_cvc(self):
     """Validate CVC and return True if valid"""
     cleaned = self.cvc_label.text
+    if not cleaned.isdigit():
+        self.cvc_label.background = '#fff0f0'
+        alert("Please enter only numbers for CVC")
+        return False
     required_length = 4 if hasattr(self, 'card_type') and self.card_type == 'Amex' else 3
     if len(cleaned) != required_length:
       self.cvc_label.background = '#fff0f0'
       alert(f"Please enter a valid {required_length}-digit security code")
-      self.cvc_label.focus()
       return False
     return True
 
   def validate_zip(self):
     """Validate ZIP code and return True if valid"""
-    if len(self.zip_label.text) != 5:
+    if not self.zip_label.text.isdigit() or len(self.zip_label.text) != 5:
       self.zip_label.background = '#fff0f0'
       alert("Please enter a valid 5-digit ZIP code")
-      self.zip_label.focus()
       return False
     return True
 
@@ -146,7 +145,6 @@ class cardInfo(cardInfoTemplate):
     if len(cleaned) < 2 or not any(c.isalpha() for c in cleaned):
       self.name_on_card_label.background = '#fff0f0'
       alert("Please enter a valid name")
-      self.name_on_card_label.focus()
       return False
     return True
 
