@@ -28,6 +28,29 @@ components:
         padding: ['15', '45', '15', '45']
       text: Collect Payment
     type: Button
+  - event_bindings: {click: collect_payment_button_click}
+    layout_properties: {}
+    name: existing_bills_button_copy
+    properties:
+      bold: false
+      font_size: 20
+      foreground: ''
+      spacing:
+        margin: ['10', null, '10', null]
+        padding: ['15', '45', '15', '45']
+      text: Customers
+    type: Button
+  - event_bindings: {click: collect_payment_button_click}
+    name: existing_bills_button
+    properties:
+      bold: false
+      font_size: 20
+      foreground: ''
+      spacing:
+        margin: ['10', null, '10', null]
+        padding: ['15', '45', '15', '45']
+      text: Created Bills
+    type: Button
   - event_bindings: {click: billing_library_button_click}
     layout_properties: {}
     name: billing_library_button
