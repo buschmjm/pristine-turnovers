@@ -205,3 +205,23 @@ class cardInfo(cardInfoTemplate):
     """Handle cancel button click"""
     if confirm("Are you sure you want to cancel? The invoice has already been created."):
       open_form('landingPage')
+
+  def card_number_label_pressed_enter(self, **event_args):
+    """This method is called when the user presses Enter in this text box"""
+    pass
+
+  def card_number_label_lost_focus(self, **event_args):
+    """This method is called when the TextBox loses focus"""
+    pass
+
+  def cvc_label_lost_focus(self, **event_args):
+    """This method is called when the TextBox loses focus"""
+    pass
+
+  def expiration_label_lost_focus(self, **event_args):
+    """This method is called when the TextBox loses focus"""
+    pass
+
+  def zip_label_lost_focus(self, **event_args):
+    """This method is called when the TextBox loses focus"""
+    pass
