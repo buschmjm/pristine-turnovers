@@ -1,19 +1,19 @@
 from datetime import datetime
-import anvil.server
 from anvil import *
+import anvil.server
 
-class cardInfo(cardInfoTemplate):
+class cardInfo(CardInfoTemplate):  # Make sure this matches your template name exactly
     def __init__(self, **properties):
         self.init_components(**properties)
         self.subtotal = 0
         self.total = 0
         self.bill_items = []
-        
-    def form_show(self, **event_args):
-        """Called when the form is shown"""
-        self.card_number_label.set_event_handler('pressed_enter', self.card_number_label_pressed_enter)
-        self.process_payment_button.set_event_handler('click', self.process_payment_button_click)
-        
+        # Set up event handlers in init
+        if hasattr(self, 'card_number_label'):
+            self.card_number_label.set_event_handler('pressed_enter', self.card_number_label_pressed_enter)
+        if hasattr(self, 'process_payment_button'):
+            self.process_payment_button.set_event_handler('click', self.process_payment_button_click)
+    
     def card_number_label_pressed_enter(self, **event_args):
         """Handle enter key press on card number field"""
         self.cvc_label.focus()
@@ -37,23 +37,30 @@ class cardInfo(cardInfoTemplate):
     def update_totals(self, bill_items):
         """Update totals from bill items"""
         try:
-            if not bill_items or not isinstance(bill_items, list):
+            if not bill_items:
                 self.subtotal = 0
                 self.total = 0
                 return
                 
+            # Filter out None and invalid items
             valid_items = [item for item in bill_items if item and isinstance(item, dict) and 'amount' in item]
-            self.subtotal = sum(item['amount'] for item in valid_items)
-            self.total = self.subtotal  # Add tax calculation if needed
             
-            # Update UI elements if they exist
+            if not valid_items:
+                self.subtotal = 0
+                self.total = 0
+                return
+                
+            self.subtotal = sum(float(item['amount']) for item in valid_items)
+            self.total = self.subtotal
+            
+            # Update labels if they exist
             if hasattr(self, 'subtotal_label'):
                 self.subtotal_label.text = f"${self.subtotal:.2f}"
             if hasattr(self, 'total_label'):
                 self.total_label.text = f"${self.total:.2f}"
                 
         except Exception as e:
-            print(f"Error updating totals: {str(e)}")
+            print(f"Error in update_totals: {str(e)}")
             self.subtotal = 0
             self.total = 0
 
